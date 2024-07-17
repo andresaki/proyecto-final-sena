@@ -1,16 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 
 // iconos
 import {  AiOutlineDelete} from "react-icons/ai";
 
 // Keep react
-import {Button, Modal} from "keep-react";
+import {Button, Modal, toast} from "keep-react";
 
 // data
-import { pedidos } from "../../../Data/Pedidos";
+import { deletePedido, getPedidos } from "../../../Redux/actions/pedidoActionts";
+import { DELETE_PEDIDO_RESET } from "../../../Redux/constants/pedidoConstants";
 
 export const ModalEliminar = ({ pedidoId, showModal, handleCloseModal }) => {
-    const pedido = pedidos[pedidoId - 1];
+
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+    const {pedidos} = useSelector(state => state.pedidos)
+    const { success } = useSelector( (state) => state.pedido);
+    const pedido = pedidos.find(p => p._id === pedidoId);
+
+
+    useEffect(() => {
+       
+        if (success) {
+            toast.success("Pedido eliminado correctamente")
+            dispatch({type: DELETE_PEDIDO_RESET})
+            dispatch(getPedidos());
+            handleCloseModal();
+            navigate("/Pedidos");
+
+        }
+    }, [dispatch, toast, success]);
+    
+    
+    const deleteProductHandler = (id) => {
+        dispatch(deletePedido(id))
+
+        toast.success("Pedido eliminado correctamente")
+        dispatch({type: DELETE_PEDIDO_RESET})
+        dispatch(getPedidos());
+        handleCloseModal();
+        navigate("/Pedidos");
+    }
+
+
 
     return (
         <>
@@ -47,7 +82,7 @@ export const ModalEliminar = ({ pedidoId, showModal, handleCloseModal }) => {
                             cancelar
                         </Button>
                         <Button
-                            onClick={handleCloseModal}
+                            onClick={() => deleteProductHandler(pedidoId)}
                             className="text-white h-12 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-base px-5 py-2.5 text-center  rounded-xl hover:bg-primario hover:scale-105"
                         >
                             Confirmar

@@ -1,17 +1,71 @@
-import React from "react";
-import Fondo from "./Fondo.png";
+import React, { useEffect, useState } from "react";
 import { HiOutlineUserCircle } from "react-icons/hi2";
-import { Buildings } from "phosphor-react";
 import NavConfiguracion from "../NavConfiguracion";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button } from "keep-react";
-import { Link } from "react-router-dom";
+import { MetaData } from "../../../Componentes Generales/MetaData/MetaData";
+
+import {
+    updateProfile,
+    loadUser,
+    clearErrors,
+} from "../../../Redux/actions/userActions";
+import { UPDATE_PROFILE_RESET } from "../../../Redux/constants/userConstants";
+import { toast } from "keep-react";
+import { Navigate, useNavigate } from "react-router-dom";
+
+
 
 function EditarUsuario() {
-    const { user, loading } = useSelector((state) => state.auth);
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+    const { error, isUpdated } = useSelector(state => state.user);
+    const { user, loading } = useSelector(state => state.auth);
+
+    const [Nombre, setNombre] = useState("");
+    const [Email, setEmail] = useState("");
+    const [Telefono, setTelefono] = useState("");
+
+    useEffect(() => {
+        if (user) {
+            setNombre(user.nombre);
+            setEmail(user.email);
+            setTelefono(user.telefono);
+        }
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+        if (isUpdated) {
+            toast.success("perfil actualizado correctamente");
+            dispatch(loadUser());
+
+            // navigate("/configuracion/MiCuenta")
+
+
+            dispatch({
+                type: UPDATE_PROFILE_RESET,
+            });
+        }
+    }, [dispatch, toast, error, isUpdated]);
+
+    const onSubmit = (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+
+        formData.set("nombre", Nombre);
+        formData.set("email", Email);
+        formData.set("telefono", Telefono);
+
+        dispatch(updateProfile(formData))
+    };
 
     return (
         <NavConfiguracion>
+            <MetaData title={"Actualizar perfil"} />
+
             <main className="grid lg:grid-cols-2 grid-cols-1 gap-24">
                 {/* formualtio */}
                 <div className="w-full md:max-w-md  xl:max-w-4xl ">
@@ -24,7 +78,10 @@ function EditarUsuario() {
                         </p>
                     </div>
 
-                    <form className="mt-14 space-y-8 xl:space-y-0 xl:grid xl:grid-cols-2 gap-8">
+                    <form
+                        onSubmit={onSubmit}
+                        className="mt-14 space-y-8 xl:space-y-0 xl:grid xl:grid-cols-2 gap-8"
+                    >
                         <div className="space-y-2">
                             <label
                                 className="block  font-montserrat text-xs font-medium text-black"
@@ -38,6 +95,8 @@ function EditarUsuario() {
                                 placeholder="nombre"
                                 type="text"
                                 name="nombre"
+                                value={Nombre}
+                                onChange={(e) => setNombre(e.target.value)}
                             />
                         </div>
 
@@ -54,13 +113,15 @@ function EditarUsuario() {
                                 placeholder="email"
                                 type="email"
                                 name="email"
+                                value={Email}
+                                onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label
                                 className="block  font-montserrat text-xs font-medium text-black"
-                                htmlFor="subscription-expiry"
+                                htmlFor="telefono"
                             >
                                 Telefono
                             </label>
@@ -70,6 +131,8 @@ function EditarUsuario() {
                                 placeholder="000 000 00 00"
                                 type="tel"
                                 name="telefono"
+                                value={Telefono}
+                                onChange={(e) => setTelefono(e.target.value)}
                             />
                         </div>
 
@@ -86,12 +149,14 @@ function EditarUsuario() {
 
                 <div className="grid gap-7">
                     <div className="w-full max-w-md  shadow-md rounded-b-sm">
-                        <div className="relative h-24 overflow-hidden rounded-t-lg">
-                            <img
+                        <div className="relative h-16 overflow-hidden rounded-t-lg">
+                            {/* <img
                                 src={Fondo}
                                 alt="Backgroud"
                                 className="h-full w-full object-cover object-bottom  "
-                            />
+                            /> */}
+
+                            <div className="h-full w-full object-cover object-bottom bg-primario  "></div>
                         </div>
 
                         {/* Card- Body */}
@@ -108,10 +173,9 @@ function EditarUsuario() {
                                         User
                                     </div>
                                 </div>
-                                
                             </div>
 
-                            <div className="mt-6 rounded-lg bg-blue-50 p-4 ">
+                            <div className="mt-6 rounded-lg  p-4 ">
                                 <div className="grid gap-3 text-sm">
                                     <div className="flex items-center justify-between">
                                         <div className="text-[#494949] text-xs font-semibold">

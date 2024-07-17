@@ -1,11 +1,11 @@
 import React from "react";
 import { DropdownAccionesComponent } from "./DropdownAccionesComponent";
 
-export const ItemTabla = ({ producto }) => {
-    let i = 1;
+export const ItemTabla = ({ producto , index }) => {
+    
     return (
         <tr className="  bg-white border-b cursor-default   h-9 hover:bg-gray-50 font-light text-xs text-neutral-600 ">
-            <td className="pl-10 ">{i++} </td>
+            <td className="pl-10 ">{index} </td>
             <td className="text-primario font-medium cursor-pointer">
                 {producto.nombre}
             </td>

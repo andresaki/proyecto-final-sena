@@ -14,7 +14,7 @@ import { ModalEditar } from "./ModalEditar";
 import { ModalEliminar } from "./ModalEliminar";
 
 
-export const DropdownAccionesComponent = ({ ingresoId }) => {
+export const DropdownAccionesComponent = ({ gastoId }) => {
     const [showModal, setShowModal] = useState(false);
     const [Tipo, setTipo] = useState("");
 
@@ -67,21 +67,21 @@ export const DropdownAccionesComponent = ({ ingresoId }) => {
 
             {showModal && Tipo === "Detalles" && (
                 <ModalDetalles
-                    ingresoId={ingresoId}
+                gastoId={gastoId}
                     showModal={showModal}
                     handleCloseModal={handleCloseModal}
                 />
             )}
             {showModal && Tipo === "Editar" && (
                 <ModalEditar
-                    ingresoId={ingresoId}
+                gastoId={gastoId}
                     showModal={showModal}
                     handleCloseModal={handleCloseModal}
                 />
             )}
             {showModal && Tipo === "Eliminar" && (
                 <ModalEliminar
-                    ingresoId={ingresoId}
+                gastoId={gastoId}
                     showModal={showModal}
                     handleCloseModal={handleCloseModal}
                 />

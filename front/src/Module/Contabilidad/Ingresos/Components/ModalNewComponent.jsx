@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { NumericFormat } from "react-number-format";
 
 // iconos
 import { MdOutlineAdd } from "react-icons/md";
@@ -7,10 +10,12 @@ import { MdOutlineAdd } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal, Divider } from "keep-react";
+import { Button, Modal, toast } from "keep-react";
+import { clearErrors, getIngresos, newIngreso } from "../../../../Redux/actions/ingresoActions";
+import { NEW_INGRESO_RESET } from "../../../../Redux/constants/ingresoConstants";
 
 // Hook
-import { useForm } from "../../../../Hooks/useForm";
+
 
 export const ModalNewComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -22,19 +27,56 @@ export const ModalNewComponent = () => {
         setIsOpen(false);
     };
 
-    const estructura = {
-        categoria: "",
-        descripcion: "",
-        monto: ""
-    };
-    const { formState, onInputChange } = useForm(estructura);
-    const { categoria, descripcion, monto } = formState;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { error, success } = useSelector( (state) => state.newIngreso );
+
+    const [categoria, setCategoria] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [monto, setMonto] = useState(0);
+
+    useEffect(() => {
+
+        if (error) {
+            toast.error(error)
+            dispatch(clearErrors())
+        }
+
+        if (success) {
+            toast.success("Ingreso registrado correctamente");
+            navigate("/Contabilidad/Ingresos");
+            closeModal();
+            dispatch({ type: NEW_INGRESO_RESET });
+            dispatch(getIngresos())
+
+            setCategoria("")
+            setDescripcion("")
+            setMonto(0)
+        }
+
+    }, [dispatch, toast, error, success])
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("categoria", categoria);
+        formData.set("descripcion", descripcion);
+        formData.set("monto", monto);
+
+        dispatch(newIngreso(formData));
+        dispatch(getIngresos());
     };
 
+    const categorias = [
+        "Salario",
+        "Alquiler",
+        "Venta",
+        "Pedido",
+        "Servicio",
+        "Propina",
+        "Otros",
+    ];
     return (
         <>
             <Button
@@ -75,14 +117,25 @@ export const ModalNewComponent = () => {
                                     >
                                         Monto
                                     </label>
-                                    <input
-                                        placeholder="Ingresa el monto"
-                                        type="text"
+                                    <NumericFormat
                                         name="monto"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2 "
-                                        required
                                         value={monto}
-                                        onChange={onInputChange}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setMonto(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-5/6 p-3 focus:ring-primario focus:ring-2 "
+                                        thousandSeparator={true}
+                                        prefix={"$  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
+                                        required
+                                        placeholder="Ingrese el monto"
                                     />
                                 </div>
 
@@ -96,37 +149,21 @@ export const ModalNewComponent = () => {
                                     </label>
                                     <select
                                         value={categoria}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setCategoria(e.target.value)
+                                        }
                                         name="categoria"
-                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block w-6/6 p-3 focus:ring-primario focus:ring-2"
                                     >
-                                        <option className="py-2 text-sm text-secundario" value={"no"}>
+                                        <option className="py-2 text-sm " >
                                             Selecciona una categoria
                                         </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Salario
+                                        
+                                        {categorias.map((c) => (
+                                            <option key={c} className="py-2 text-sm " value={c}>
+                                            {c}
                                         </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Inversion
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Alquiler
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Venta
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Pedido
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Servicio
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Propina
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Otro
-                                        </option>
+                                        ))}
                                     </select>
                                 </div>
 
@@ -144,7 +181,9 @@ export const ModalNewComponent = () => {
                                         className="outline-none border min-h-40 border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
                                         placeholder="Agrega una descripcion"
                                         value={descripcion}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setDescripcion(e.target.value)
+                                        }
                                     />
                                 </div>
 

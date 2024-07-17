@@ -1,18 +1,51 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // iconos
 import {
     AiOutlineDelete,
 } from "react-icons/ai";
 
 // Keep react
-import { Button, Modal } from "keep-react";
+import { Button, Modal, toast } from "keep-react";
 
 // data
-import { clientes } from "../../../Data/Clientes";
+import { DELETE_CLIENTE_RESET } from "../../../Redux/constants/clienteConstants";
+import { deleteCliente, getClientes } from "../../../Redux/actions/clienteActionts";
 
 export const ModalEliminar = ({ clienteId, showModal, handleCloseModal }) => {
-    const cliente = clientes[clienteId - 1];
+
+    const {clientes} = useSelector(state => state.clientes)
+    const { success } = useSelector(    (state) => state.cliente  );
+
+    const cliente = clientes.find(c => c._id === clienteId);
+    
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+    useEffect(() => {
+       
+
+        // no se si funcione
+        if (success) {
+            toast.success("cliente eliminado correctamente")
+            dispatch({type: DELETE_CLIENTE_RESET})
+            dispatch(getClientes());
+            handleCloseModal();
+            navigate("/Clientes");
+
+        }
+    }, [dispatch, toast, success]);
+    
+    
+    const deleteHandler = (id) => {
+        dispatch(deleteCliente(id))
+
+        toast.success("cliente eliminado correctamente")
+        dispatch({type: DELETE_CLIENTE_RESET})
+        dispatch(getClientes());
+        handleCloseModal();
+        navigate("/Clientes");
+    }
 
     return (
         <>
@@ -40,7 +73,7 @@ export const ModalEliminar = ({ clienteId, showModal, handleCloseModal }) => {
                             cancelar
                         </Button>
                         <Button
-                            onClick={handleCloseModal}
+                            onClick={() => deleteHandler(clienteId)}
                             className="text-white h-12 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-base px-5 py-2.5 text-center  rounded-xl hover:bg-primario hover:scale-105"
                         >
                             Confirmar

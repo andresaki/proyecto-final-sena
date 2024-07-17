@@ -3,16 +3,17 @@ const nodemailer = require("nodemailer");
 const sendEmail = async options => {
 
     const transport = nodemailer.createTransport({
-        host: "smtp.outlook.com",
-        port:  587,
+        host: "smtp.gmail.com",
+        port:  465,
+        secure: true,
         auth: {
-           user: "SistemaErp_@outlook.com",
-           pass: "xfhhsmhyejdmavsb"
+           user: "andrespradah@gmail.com",
+           pass: "kudnzzhxednsupva"
         }
     });
 
     const mensaje = {
-        from: "Sistema Erp <SistemaErp_@outlook.com>",
+        from: "Sistema Erp <Sistema@gmail.com.com>",
         to: options.email,
         subject: options.subject,
         // text: options.mensaje

@@ -1,42 +1,79 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // iconos
 import { MdOutlineAdd } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 
 // Keep react
-import {  Button, Modal } from "keep-react";
+import { Button, Modal, toast } from "keep-react";
 
 // Hook
 import { useForm } from "../../../Hooks/useForm";
 
+import { clearErrors, getClientes, newCliente } from "../../../Redux/actions/clienteActionts";
+import { NEW_CLIENTE_RESET } from "../../../Redux/constants/clienteConstants";
+import { NumericFormat } from "react-number-format";
 
 export const ModalNewComponent = () => {
 
     const [isOpen, setIsOpen] = useState(false);
-
     const openModal = () => {
         setIsOpen(true);
     };
-
     const closeModal = () => {
         setIsOpen(false);
     };
 
-    const estructura = {
-        nombre: "",
-        telefono1: "",
-        telefono2: "",
-    };
-    
-    const { formState, onInputChange } = useForm(estructura);
-    const { nombre, telefono1, telefono2 } = formState;
+
+    // metodo, useefect...
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loading, error, success } = useSelector(
+        (state) => state.newCliente
+    );
+
+
+    const [nombre, setNombre] = useState("");
+    const [telefono, setTelefono] = useState("");
+    const [telefono2, setTelefono2] = useState("");
+
+
+
+    useEffect(() => {
+
+        if (error) {
+            toast.error(error)
+            dispatch(clearErrors)
+        }
+
+        if (success) {
+            toast.success("Cliente registrado correctamente");
+            navigate("/Clientes");
+            closeModal();
+            dispatch({ type: NEW_CLIENTE_RESET });
+            dispatch(getClientes())
+
+            setNombre("")
+            setTelefono("")
+            setTelefono2("")
+        }
+    }, [dispatch, toast, error, success])
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("nombre", nombre);
+        formData.set("telefono", telefono);
+        formData.set("telefono2", telefono2);
+
+        dispatch(newCliente(formData));
+        dispatch(getClientes());
     };
+
 
     return (
         <>
@@ -79,46 +116,66 @@ export const ModalNewComponent = () => {
                                         type="text"
                                         name="nombre"
                                         className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                                        placeholder="Nombre del cliente"
                                         required
                                         value={nombre}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setNombre(e.target.value)
+                                        }
                                     />
                                 </div>
 
                                 <div className="col-span-1 ">
                                     <label
-                                        htmlFor="cantidadInicial"
+                                        htmlFor="telefono"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Telefono
                                     </label>
-                                    <input
-                                        type="tel"
-                                        name="telefono1"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
+                                    <NumericFormat
+                                        name="telefono"
+                                        value={telefono}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setTelefono(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
+                                        prefix={"Tel :  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
                                         required
-                                        placeholder="0"
-                                        value={telefono1}
-                                        onChange={onInputChange}
                                     />
                                 </div>
 
                                 <div className="col-span-1 ">
                                     <label
-                                        htmlFor="stockMinimo"
+                                        htmlFor="telefono2"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Telefono secundario
                                     </label>
-                                    <input
-                                        type="tel"
+                                
+                                    <NumericFormat
                                         name="telefono2"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                                        placeholder="0"
-                                        required=""
                                         value={telefono2}
-                                        onChange={onInputChange}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setTelefono2(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
+                                        
+                                        prefix={"Tel :  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
                                     />
                                 </div>
 

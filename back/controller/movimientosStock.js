@@ -33,7 +33,7 @@ exports.newMovimiento = catchAsyncErrors( async (req, res, next) => {
 
     // miramos que tipo de movimiento se va a hacer y se calcula
     if (req.body.tipo === "entrada"){
-        product.stock += req.body.cantidad 
+        product.stock += Number(req.body.cantidad);
     }
     else if (req.body.tipo === "salida"){
         
@@ -41,7 +41,7 @@ exports.newMovimiento = catchAsyncErrors( async (req, res, next) => {
         if (product.stock < req.body.cantidad) {
             return next(new ErrorHandler("No hay suficiente stock disponible", 400));
         }
-        product.stock -= req.body.cantidad
+        product.stock -= Number(req.body.cantidad);
     }
 
     

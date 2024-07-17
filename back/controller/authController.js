@@ -82,7 +82,7 @@ exports.forgotPassword = catchAsyncErrors ( async (req, res, next) => {
 
 
     // crear una url para hacer el reseteo de la contraseña
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/resetPassword/${resetToken}`
+    const resetUrl = `${req.protocol}://${req.get("host")}/resetPassword/${resetToken}`
 
     // const mensaje = `Hemos recibido una solicitud para restablecer la contraseña de tu cuenta. Si no has solicitado un cambio de contraseña, por favor ignora este correo electrónico. \n Para restablecer tu contraseña, simplemente haz clic en el siguiente enlace: \n\n  ${resetUrl} \n\n  Por motivos de seguridad, este enlace es válido solo durante los próximos 30 minutos. Si el enlace expira, deberás solicitar un nuevo restablecimiento de contraseña. \n Si tienes alguna pregunta o necesitas asistencia adicional, no dudes en contactarnos a través de nuestro servicio de atención al cliente.\n Gracias por utilizar nuestros servicios.\n Atentamente,\n Sistema Erp `
 
@@ -118,7 +118,7 @@ exports.forgotPassword = catchAsyncErrors ( async (req, res, next) => {
         })
         res.status(200).json({
             success:true,
-            mensaje : `Correo enviado a: ${user.email}`
+            message : `Correo enviado, Revisa tu bandeja`
         })
     }catch(error){
         user.resetPasswordToken = undefined;
@@ -144,10 +144,6 @@ exports.resetPassword = catchAsyncErrors( async (req, res, next) => {
 
     
 
-    console.log(user)
-
-    console.log("Original token:", req.params.token);
-    console.log("Hashed token:", resetPasswordToken);
 
     if (!user){
         return next(new ErrorHandler("El token es invalido o ya expiro" , 400))
@@ -214,6 +210,51 @@ exports.updateProfile = catchAsyncErrors(async(req, res, next)=> {
         nombre: req.body.nombre,
         email: req.body.email,
         telefono: req.body.telefono,
+    }
+
+    
+    const user = await User.findByIdAndUpdate(req.user.id, newData, {
+        new:true,
+        runValidators: true,
+        useFindAndModify: false
+    })
+
+
+    res.status(200).json({
+        success:true,
+        user
+    })
+
+})
+
+// Update color primario (logueado)
+exports.updatePrimaryColor = catchAsyncErrors(async(req, res, next)=> {
+
+    const newData = {
+        colorPrimario: req.body.colorPrimario
+    }
+
+    
+    const user = await User.findByIdAndUpdate(req.user.id, newData, {
+        new:true,
+        runValidators: true,
+    })
+
+
+    res.status(200).json({
+        success:true,
+        user
+    })
+
+})
+
+// Update perfil de usuario (logueado)
+exports.updateEmpresa = catchAsyncErrors(async(req, res, next)=> {
+
+    const newData = {
+        nombreEmpresa: req.body.nombreEmpresa,
+        correoEmpresa: req.body.correoEmpresa,
+        direccion: req.body.direccion,
     }
 
     

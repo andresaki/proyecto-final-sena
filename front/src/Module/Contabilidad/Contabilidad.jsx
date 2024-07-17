@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
+import {MetaData} from '../../Componentes Generales/MetaData/MetaData'
 
 // iconos
 import { TbReportMoney } from "react-icons/tb";
@@ -9,7 +9,8 @@ import { HiOutlineCurrencyDollar } from "react-icons/hi2";
 function Contabilidad() {
     return (
         <main className="mx-auto flex justify-center items-center  flex-col mt-56 sm:mt-64 lg:mt-64 xl:mt-64   ">
-
+            
+            <MetaData title={"Contabilidad"}/>
             <h1 className="font-medium text-xl text-black ">Seleccione el apartado</h1>
 
             <div className="mt-24  sm:flex gap-x-32 ">

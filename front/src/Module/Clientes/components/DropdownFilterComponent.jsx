@@ -2,14 +2,14 @@ import React from "react";
 
 // iconos
 import { CiFilter } from "react-icons/ci";
-import {  GoTasklist } from "react-icons/go";
-import {  BiBox } from "react-icons/bi";
-import { MdBrightness1} from "react-icons/md";
+import { GoTasklist } from "react-icons/go";
+import { BiBox } from "react-icons/bi";
+import { MdBrightness1 } from "react-icons/md";
 
 // Keep react
-import { Dropdown} from "keep-react";
+import { Dropdown } from "keep-react";
 
-export const DropdownFilterComponent = () => {
+export const DropdownFilterComponent = ({ filterA_Z, A_Z }) => {
     return (
         <Dropdown
             action={
@@ -31,23 +31,39 @@ export const DropdownFilterComponent = () => {
                     />
                     <p className=" ml-1 text-sm">Por ordenamiento</p>
                 </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-5   flex items-center text-gray-500 h-7 ">
-                    <MdBrightness1
-                        size={5}
-                        fontWeight={100}
-                        className="fill-gray-500 "
-                    />
-                    <p className=" ml-4 text-sm">Ascendente</p>
+
+                <Dropdown.Item
+                    onClick={() => filterA_Z(false)}
+                    className={`hover:text-primario pl-9   flex items-center text-gray-600 h-7 ${
+                        A_Z == false && `pl-6 font-semibold`
+                    }`}
+                >
+                    {A_Z == false && (
+                        <MdBrightness1
+                            size={5}
+                            fontWeight={100}
+                            className="fill-black "
+                        />
+                    )}
+                    <p className=" ml-3 text-sm">Descendiente</p>
                 </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
-                    <p className=" ml-3 text-sm">Descendente</p>
-                </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
+                <Dropdown.Item
+                    onClick={() => filterA_Z(true)}
+                    className={`hover:text-primario pl-9   flex items-center text-gray-600 h-7 ${
+                        A_Z == true && `pl-6 font-semibold`
+                    }`}
+                >
+                    {A_Z == true && (
+                        <MdBrightness1
+                            size={5}
+                            fontWeight={100}
+                            className="fill-black "
+                        />
+                    )}
                     <p className=" ml-3 text-sm">De la A a la Z</p>
                 </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
-                    <p className=" ml-3 text-sm">De la z a la A 4</p>
-                </Dropdown.Item>
+
+                {/* sin funcion */}
 
                 <Dropdown.Item className=" pl-3  flex items-center text-primario font-semibold cursor-default hover:bg-transparent mt-3 ">
                     <BiBox size={20} fontWeight={100} className="stroke-0 " />

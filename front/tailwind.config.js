@@ -14,7 +14,7 @@ export default {
 
       colors: {
         primario: 'var(--primary-color)',
-        secundario: '#767676',
+        secundario: 'var(--secondary-color)',
         bordeInput: '#E4E4E4',
         terceario: '#0079E9',
         textTabla : '#272626'

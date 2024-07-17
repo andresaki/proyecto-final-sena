@@ -45,12 +45,10 @@ export const NewUsuario = () => {
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
-
         dispatch(register(formState))
 
-        console.log( user )
 
+        toast.success("Usuario creado correctamente")
     };
 
 

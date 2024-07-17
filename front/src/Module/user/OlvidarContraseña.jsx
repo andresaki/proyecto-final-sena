@@ -1,12 +1,51 @@
-import { Button } from "keep-react";
-import React from "react";
+
+import { Button, toast } from "keep-react";
+import React, { useEffect, useState } from "react";
 import { GoArrowLeft } from "react-icons/go";
-import { IoCloseOutline } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { clearErrors, forgotPassword } from "../../Redux/actions/userActions";
+import { MetaData } from "../../Componentes Generales/MetaData/MetaData";
 
 export const OlvidarContraseña = () => {
+
+    const [email, setEmail] = useState("");
+    const dispatch = useDispatch()
+    const {error, message} = useSelector (state => state.forgotPassword)
+
+
+    useEffect(() => {
+        
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+            
+        }
+        if (message) {
+            toast.success(message)
+            dispatch(clearErrors());
+        }
+    }, [dispatch, toast, error, message]);
+
+
+
+
+
+
+    const submitHandler = (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+
+        formData.set("email", email);
+
+        dispatch(forgotPassword(formData))
+    };
+
+
     return (
         <div className="w-full h-screen flex items-center justify-center ">
+            <MetaData title={"Olvide mi contraseña"}/>
             <div className="w-full md:max-w-md  xl:max-w-md  h-3/4 shadow-md rounded-t-xl border-t border-t-slate-200 p-7 border-b-4 border-primario">
                 <div className="flex justify-start mb-10">
                     <Link
@@ -29,7 +68,7 @@ export const OlvidarContraseña = () => {
                     </p>
                 </div>
 
-                <form className="mt-20 space-y-40 xl:space-y-0  ">
+                <form className="mt-20 space-y-40  " onSubmit={submitHandler}>
                     <div className="space-y-4">
                         <label
                             className="block  font-montserrat text-xs font-medium text-black"
@@ -42,6 +81,8 @@ export const OlvidarContraseña = () => {
                             id="email"
                             type="email"
                             name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
 

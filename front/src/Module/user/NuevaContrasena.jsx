@@ -1,10 +1,50 @@
-import { Button } from "keep-react";
-import React, { useState } from "react";
+import { Button, toast } from "keep-react";
+import React, { useState, useEffect } from "react";
 import { GoArrowLeft } from "react-icons/go";
 import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { Link,  } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams, useNavigate } from 'react-router-dom'
+import { clearErrors, resetPassword } from "../../Redux/actions/userActions";
+
+
 
 export const NuevaContrasena = () => {
+
+    const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const params=useParams();
+    const navigate=useNavigate();
+    const dispatch = useDispatch();
+
+    const { error, success } = useSelector(state => state.forgotPassword)
+
+    useEffect(() => {
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+
+        if (success) {
+            toast.success('Contraseña reiniciada correctamente')
+            navigate('/login')
+        }
+
+    }, [dispatch, toast, error, success])
+
+    const submitHandler = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        formData.set('password', password);
+        formData.set('confirmPassword', confirmPassword);
+        dispatch(resetPassword(params.token, formData))
+    }
+
+
+
+
     const [hidenPassword, sethidenPassword] = useState(true);
     const [hidenPassword2, sethidenPassword2] = useState(false);
 
@@ -24,6 +64,10 @@ export const NuevaContrasena = () => {
     const onHiddenPassword2 = () => {
         sethidenPassword2(true);
     };
+
+
+
+
     
     return (
         <div className="w-full h-screen flex items-center justify-center ">
@@ -49,7 +93,7 @@ export const NuevaContrasena = () => {
                     </p>
                 </div>
 
-                <form className="mt-20 space-y-14 xl:space-y-0  ">
+                <form className="mt-20 space-y-14 " onSubmit={submitHandler}>
                     <div className="space-y-4 relative">
                         {hidenPassword ? (
                             <IoEyeOutline
@@ -74,12 +118,12 @@ export const NuevaContrasena = () => {
 
                         <input
                             type={hidenPassword ? "text" : "password"}
-                            name="Password"
+                            name="password"
                             className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                            placeholder="Password"
+                            placeholder="password"
                             required
-                            // value={Password}
-                            // onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
@@ -101,17 +145,17 @@ export const NuevaContrasena = () => {
                             className="block  font-montserrat text-xs font-medium text-black"
                             htmlFor="confirmPassword"
                         >
-                            Contraseña
+                            Comfirmar contraseña
                         </label>
 
                         <input
                             type={hidenPassword2 ? "text" : "password"}
                             name="confirmPassword"
                             className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                            placeholder="confirmPassword"
+                            placeholder="confirm Password"
                             required
-                            // value={confirmPassword}
-                            // onChange={(e) => setPassword(e.target.value)}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
 

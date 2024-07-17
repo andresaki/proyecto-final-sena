@@ -1,20 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // iconos
 import { MdOutlineAdd } from "react-icons/md";
 import { IoCloseOutline } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal } from "keep-react";
-
+import { Button, Modal, toast } from "keep-react";
+import { useNavigate } from "react-router-dom";
 // Hook
 import { useForm } from "../../../Hooks/useForm";
+import {
+    clearErrors,
+    getProducts,
+    newProduct,
+} from "../../../Redux/actions/productoActions";
+import { NEW_PRODUCT_RESET } from "../../../Redux/constants/productoConstants";
 
+import { NumericFormat } from "react-number-format";
 
 export const ModalNewComponent = () => {
+    //  funciones modal
     const [isOpen, setIsOpen] = useState(false);
-    
     const openModal = () => {
         setIsOpen(true);
     };
@@ -22,18 +30,57 @@ export const ModalNewComponent = () => {
         setIsOpen(false);
     };
 
-    const estructura = {
-        nombre: "",
-        categoria: "",
-        cantidadInicial: 0,
-        stockMinimo: 0,
-    };
-    const { formState, onInputChange } = useForm(estructura);
-    const { nombre, categoria, cantidadInicial, stockMinimo } = formState;
+    // metodo, useefect...
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { loading, error, success } = useSelector(
+        (state) => state.newProduct
+    );
+
+    const [nombre, setNombre] = useState("");
+    const [categoria, setCategoria] = useState("");
+    const [stock, setStock] = useState(0);
+    const [stockMinimo, setStockMinimo] = useState(0);
+    const [precio, setPrecio] = useState(0);
+    const categorias = [
+        "Oficina",
+        "Materia Prima",
+        "Tecnologia",
+        "Hogar",
+        "Ropa y Accesorios",
+        "Alimentos y bebidas",
+        "Limpieza y suministros",
+        "Otros",
+    ];
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors);
+        }
+
+        if (success) {
+            toast.success("Producto registrado correctamente");
+            navigate("/Inventario");
+            closeModal();
+            dispatch({ type: NEW_PRODUCT_RESET });
+            dispatch(getProducts());
+        }
+    }, [dispatch, toast, error, success]);
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("nombre", nombre);
+        formData.set("categoria", categoria);
+        formData.set("stock", stock);
+        formData.set("stockMinimo", stockMinimo);
+        formData.set("precio", precio);
+
+        dispatch(newProduct(formData));
+
+        dispatch(getProducts());
     };
 
     return (
@@ -63,7 +110,11 @@ export const ModalNewComponent = () => {
                         </h3>
                     </div>
                     <Modal.Content>
-                        <form className=" mt-20 px-2" onSubmit={onSubmit}>
+                        <form
+                            className=" mt-20 px-2"
+                            onSubmit={onSubmit}
+                            encType="application/json"
+                        >
                             <div className="grid gap-12 grid-cols-2">
                                 <div className="col-span-2">
                                     <label
@@ -79,7 +130,9 @@ export const ModalNewComponent = () => {
                                         placeholder="Nombre del producto"
                                         required
                                         value={nombre}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setNombre(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -90,32 +143,49 @@ export const ModalNewComponent = () => {
                                     >
                                         Categoria
                                     </label>
-                                    <input
+                                    <select
                                         type="text"
                                         name="categoria"
                                         className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3  focus:ring-primario focus:ring-2  "
                                         placeholder="Categoria del producto"
                                         required
                                         value={categoria}
-                                        onChange={onInputChange}
-                                    />
+                                        onChange={(e) =>
+                                            setCategoria(e.target.value)
+                                        }
+                                    >
+                                        <option
+                                        >
+                                            Seleccione una categoria
+                                        </option>
+                                        {categorias.map((categoria) => (
+                                            <option
+                                                key={categoria}
+                                                value={categoria}
+                                            >
+                                                {categoria}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </div>
 
                                 <div className="col-span-1 ">
                                     <label
-                                        htmlFor="cantidadInicial"
+                                        htmlFor="stock"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Cantidad inicial
                                     </label>
                                     <input
                                         type="number"
-                                        name="cantidadInicial"
+                                        name="stock"
                                         className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
                                         required
                                         placeholder="0"
-                                        value={cantidadInicial}
-                                        onChange={onInputChange}
+                                        value={stock}
+                                        onChange={(e) =>
+                                            setStock(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -133,45 +203,39 @@ export const ModalNewComponent = () => {
                                         placeholder="0"
                                         required=""
                                         value={stockMinimo}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setStockMinimo(e.target.value)
+                                        }
                                     />
                                 </div>
 
-                                <div className="col-span-1 ">
+                                <div className="col-span-2">
                                     <label
-                                        htmlFor="proveedor"
+                                        htmlFor="precio"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
-                                        Proveedor
+                                        Precio
                                     </label>
-                                    <select
-                                        name="proveedor"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
-                                    >
-                                        <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={"1"}
-                                        >
-                                            seleccione
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div className="col-span-1 relative  pt-8 ">
-                                    <p className="absolute -left-7 bottom-3">
-                                        o
-                                    </p>
-
-                                    <button
-                                        type="button"
-                                        className="hover:scale-105 transition-all duration-200 w-full h-10 flex items-center justify-evenly text-white font-normal text-sm bg-primario rounded"
-                                    >
-                                        <MdOutlineAdd className="block text-2xl w-5 h-5  fill-white  lg:w-5" />
-
-                                        <p className="sm:block  text-sm ">
-                                            Crear proveedor
-                                        </p>
-                                    </button>
+                                    <NumericFormat
+                                        name="precio"
+                                        value={precio}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setPrecio(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
+                                        thousandSeparator={true}
+                                        prefix={"$  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
+                                        required
+                                        placeholder="Ingrese el precio"
+                                    />
                                 </div>
 
                                 <Modal.Footer className=" col-span-2 flex justify-end w-full mt-14">

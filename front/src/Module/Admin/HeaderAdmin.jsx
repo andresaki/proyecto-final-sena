@@ -73,7 +73,8 @@ export const HeaderAdmin = ({children}) => {
                         </Link>
                         <Link className="relative group"  to={"/"}>
                             <CgWebsite className="text-primario" size={24} />
-                            <p className="absolute left-11 top-0 rounded-md w-max px-2 text-center py-1  bg-primario text-white font-semibold text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">Sitio web</p>
+                            
+                            
                         </Link>
                             
                         

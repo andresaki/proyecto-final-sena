@@ -1,47 +1,133 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+    clearErrors,
+    getPedidoDetails,
+    getPedidos,
+    newPedido,
+    updatePedido,
+} from "../../../Redux/actions/pedidoActionts";
+import { getClientes } from "../../../Redux/actions/clienteActionts";
 
 // iconos
-import {  MdOutlineAdd} from "react-icons/md";
+import { MdOutlineAdd } from "react-icons/md";
 
-import { IoCloseOutline  } from "react-icons/io5";
+import { IoCloseOutline } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal, Divider } from "keep-react";
-
-// Hook
-import { useForm } from "../../../Hooks/useForm";
+import { Button, Modal, Divider, toast } from "keep-react";
 
 // data
 import { pedidos } from "../../../Data/Pedidos";
+import { NumericFormat } from "react-number-format";
+import { UPDATE_PEDIDO_RESET } from "../../../Redux/constants/pedidoConstants";
 
 export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
-    const pedido = pedidos[pedidoId - 1];
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const estructura = {
-        nombre: pedido.nombre,
-        descripcion: pedido.descripcion,
-        especificacionespedido: pedido.especificacionesCliente,
-        estadoProduccion: pedido.estadoProduccion, // Completado
-        estadoEntrega: pedido.estadoEntrega, // No reclamado
-        pagado: pedido.pagado,
-        costoTotal: pedido.costoTotal,
-        cliente: pedido.cliente.nombre,
-        fechaEntregaEstimada: pedido.fechaEntregaEstimada,
-        fechaPedido: "2024-04-25",
-    };
-    const { formState, onInputChange } = useForm(estructura);
-    const {
-        nombre,
-        descripcion,
-        especificacionespedido,
-        costoTotal,
-        fechaEntregaEstimada,
-    } = formState;
+    // selector de todos los clientes, detalles pedido , updatepedido
+    const { clientes, error: errorClientes } = useSelector(
+        (state) => state.clientes
+    );
+    const { error, pedido } = useSelector((state) => state.pedidoDetails);
+    const { isUpdated, error: updateError} = useSelector(  (state) => state.updatePedido  );
+
+    const [nombre, setNombre] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [expecificacionesCliente, setExpecificacionesCliente] = useState("");
+    const [pagado, setPagado] = useState(false);
+    const [terminado, setTerminado] = useState(false);
+    const [entregado, setEntregado] = useState(false);
+    const [costoTotal, setCostoTotal] = useState(0);
+    const [fechaEstimadaEntrega, setFechaEstimadaEntrega] = useState("");
+    const [cliente, setCliente] = useState("");
+
+    useEffect(() => {
+        dispatch(getClientes());
+
+        if (errorClientes) {
+            toast.error(errorClientes);
+            dispatch(clearErrors());
+        }
+    }, [dispatch, errorClientes]);
+
+    useEffect(() => {
+        if (pedido && pedido._id !== pedidoId) {
+            dispatch(getPedidoDetails(pedidoId));
+        } else {
+            setNombre(pedido.nombre);
+            setDescripcion(pedido.descripcion);
+            setExpecificacionesCliente(pedido.expecificacionesCliente);
+            setPagado(pedido.pagado);
+            setTerminado(pedido.terminado);
+            setEntregado(pedido.entregado);
+            setCostoTotal(pedido.costoTotal);
+            setFechaEstimadaEntrega(pedido.fechaEstimadaEntrega.split('T')[0]);
+            setCliente(pedido.cliente);
+        }
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+
+        if (updateError) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+
+        if (isUpdated) {
+            toast.success("Pedido Actualizado correctamente");
+            navigate("/Pedidos");
+            handleCloseModal();
+            dispatch({ type: UPDATE_PEDIDO_RESET });
+            dispatch(getPedidos());
+            setNombre("");
+            setDescripcion("");
+            setExpecificacionesCliente("");
+            setPagado(false);
+            setEntregado(false);
+            setTerminado(false);
+            setCostoTotal("");
+            setFechaEstimadaEntrega("");
+            setCliente("");
+
+
+
+        }
+    }, [dispatch, toast, error, isUpdated,navigate,  updateError, pedido, pedidoId]);
+
+    console.log(pedido)
+    console.log(
+        cliente
+    )
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("nombre", nombre);
+        formData.set("descripcion", descripcion);
+        formData.set("expecificacionesCliente", expecificacionesCliente);
+        formData.set("pagado", pagado);
+        formData.set("terminado", terminado);
+        formData.set("entregado", entregado);
+        formData.set("costoTotal", costoTotal);
+        formData.set("fechaEstimadaEntrega", fechaEstimadaEntrega);
+        formData.set("cliente", cliente);
+
+        dispatch(updatePedido(pedido._id, formData));
+
+       console.log(
+        cliente
+
+       )
     };
+
+
 
     return (
         <>
@@ -77,7 +163,9 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
                                         placeholder="ej: estampado , confeccion , areglo . . . "
                                         required
                                         value={nombre}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setNombre(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -95,7 +183,9 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
                                         placeholder="Ingrese los detalles o la descripcion del pedido"
                                         required
                                         value={descripcion}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setDescripcion(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -111,8 +201,41 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
                                         name="especificacionespedido"
                                         className="outline-none border min-h-40 border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
                                         placeholder="Ingrese las especificaciones o requerimientos que tiene el pedido"
-                                        value={especificacionespedido}
-                                        onChange={onInputChange}
+                                        value={expecificacionesCliente}
+                                        onChange={(e) =>
+                                            setExpecificacionesCliente(
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
+
+                                <div className="col-span-2">
+                                    <label
+                                        htmlFor="costoTotal"
+                                        className="block mb-3  text-xs font-medium text-black"
+                                    >
+                                        Costo total
+                                    </label>
+                                    <NumericFormat
+                                        name="costoTotal"
+                                        value={costoTotal}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setCostoTotal(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
+                                        thousandSeparator={true}
+                                        prefix={"$  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
+                                        required
+                                        placeholder="Ingrese el precio"
                                     />
                                 </div>
 
@@ -127,74 +250,101 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
                                         type="date"
                                         className="outline-none border min-h-10  border-bordeInput text-gray-800 text-xs rounded-md block w-2/3 p-3 focus:ring-primario focus:ring-2 "
                                         name="fechaEntregaEstimada"
-                                        value={fechaEntregaEstimada}
-                                        onChange={onInputChange}
+                                        value={fechaEstimadaEntrega}
+                                        onChange={(e) =>
+                                            setFechaEstimadaEntrega(
+                                                e.target.value
+                                            )
+                                        }
                                     />
                                 </div>
 
-                                <div className="col-span-2">
-                                    <label
-                                        htmlFor="costoTotal"
-                                        className="block mb-3  text-xs font-medium text-black"
-                                    >
-                                        Costo total
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="costoTotal"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-2/3 p-3 focus:ring-primario focus:ring-2 "
-                                        required
-                                        value={costoTotal}
-                                        onChange={onInputChange}
-                                    />
-                                </div>
+                                <Divider className="col-span-2 my-10" />
 
                                 <div className="col-span-2">
                                     <label
-                                        htmlFor="costoTotal"
+                                        htmlFor="estado"
                                         className="block mb-3  text-xs font-medium text-black"
                                     >
                                         Estado de produccion
                                     </label>
                                     <select
-                                        name="proveedor"
+                                        name="estado"
+                                        value={terminado}
+                                        onChange={(e) =>
+                                            setTerminado(e.target.value)
+                                        }
                                         className="outline-none border w-2/3 border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
                                     >
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={false}
+                                            className="py-2 text-sm"
+                                            value={false}
                                         >
                                             Pendiente
                                         </option>
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={true}
+                                            className="py-2 text-sm "
+                                            value={true}
                                         >
                                             Finalizado
                                         </option>
                                     </select>
                                 </div>
 
-                                <div className="col-span-2  ">
+                                <div className="col-span-1  ">
                                     <label
-                                        htmlFor="proveedor"
+                                        htmlFor="pagado"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Pagado
                                     </label>
                                     <select
-                                        name="proveedor"
-                                        className="outline-none border w-2/3 border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                        name="pagado"
+                                        value={pagado}
+                                        onChange={(e) =>
+                                            setPagado(e.target.value)
+                                        }
+                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
                                     >
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={false}
+                                            className="py-2 text-sm "
+                                            value={false}
                                         >
                                             No
                                         </option>
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={true}
+                                            className="py-2 text-sm "
+                                            value={true}
+                                        >
+                                            Si
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div className="col-span-1  ">
+                                    <label
+                                        htmlFor="entregado"
+                                        className="block mb-3 font-montserrat text-xs font-medium text-black"
+                                    >
+                                        Entregado
+                                    </label>
+                                    <select
+                                        name="entregado"
+                                        value={entregado}
+                                        onChange={(e) =>
+                                            setEntregado(e.target.value)
+                                        }
+                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                    >
+                                        <option
+                                            className="py-2 text-sm "
+                                            value={false}
+                                        >
+                                            No
+                                        </option>
+                                        <option
+                                            className="py-2 text-sm "
+                                            value={true}
                                         >
                                             Si
                                         </option>
@@ -203,47 +353,48 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
                                 <Divider className="col-span-2 my-10" />
 
-                                <div className="col-span-1  ">
+                                <div className="col-span-2  ">
                                     <label
-                                        htmlFor="proveedor"
+                                        htmlFor="cliente"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Cliente
                                     </label>
                                     <select
-                                        name="proveedor"
-                                        className="outline-none border w-4/5 border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                        name="cliente"
+                                        value={cliente}
+                                        onChange={(e) =>
+                                            setCliente(e.target.value)
+                                        }
+                                        className="outline-none border w-full border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
                                     >
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={"1"}
+                                            className="py-2 text-sm "
                                         >
                                             seleccione
                                         </option>
+
+                                        {!clientes ? (
+                                            <></>
+                                        ) : (
+                                            clientes.map((cliente) => (
+                                                <option
+                                                    key={cliente._id}
+                                                    className="py-2 text-sm"
+                                                    value={cliente._id}
+                                                >
+                                                    {cliente.nombre}
+                                                </option>
+                                            ))
+                                        )}
                                     </select>
                                 </div>
 
-                                <div className="col-span-1 relative  pt-8  ">
-                                    <p className="absolute -left-4 bottom-3">
-                                        o
-                                    </p>
-
-                                    <button
-                                        type="button"
-                                        className="hover:scale-105 ml-auto border w-5/6 transition-all duration-200 h-10 flex items-center justify-evenly text-white font-normal text-sm bg-primario rounded"
-                                    >
-                                        <MdOutlineAdd className="block text-2xl w-5 h-5  fill-white  lg:w-5" />
-
-                                        <p className="sm:block  text-xs ">
-                                            Registrar pedido
-                                        </p>
-                                    </button>
-                                </div>
+                                
 
                                 <Modal.Footer className=" col-span-2 flex justify-center w-full mt-16 mb-6">
                                     <Button
                                         type="submit "
-                                        onClick={handleCloseModal}
                                         className="text-white h-10 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-sm px-5 py-2.5 text-center  rounded hover:bg-primario hover:scale-105"
                                     >
                                         Guardar cambios

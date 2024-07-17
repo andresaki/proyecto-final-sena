@@ -1,17 +1,55 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 // iconos
 import {  AiOutlineDelete} from "react-icons/ai";
 
 // Keep react
-import {Button, Modal} from "keep-react";
+import {Button, Modal, toast} from "keep-react";
 
-// data
-import { ingresos } from "../../../../Data/Ingresos";
+
+import { DELETE_INGRESO_RESET } from "../../../../Redux/constants/ingresoConstants";
+import { deleteIngreso, getIngresos } from "../../../../Redux/actions/ingresoActions";
 
 export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
-    const ingreso = ingresos[ingresoId - 1];
+    
+    const {ingresos} = useSelector(state => state.ingresos)
+    const { isDelected ,error } = useSelector(    (state) => state.deleteIngreso  );
 
+    const ingreso = ingresos.find(c => c._id === ingresoId);
+    
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+
+
+    
+
+    useEffect(() => {
+
+
+
+        if (error) {
+            toast.error(error)
+        }
+
+        // no se si funcione
+        if (isDelected) {
+            toast.success("Ingreso eliminado correctamente")
+            dispatch({type: DELETE_INGRESO_RESET})
+            dispatch(getIngresos());
+            handleCloseModal();
+            navigate("/Contabilidad/Ingresos");
+
+        }
+    }, [dispatch, toast, isDelected]);
+
+
+    const deleteHandler = (id) => {
+        dispatch(deleteIngreso(id))
+    }
+    
+    console.log(isDelected)
     return (
         <>
             <Modal isOpen={showModal} onClose={handleCloseModal}>
@@ -35,7 +73,7 @@ export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
                             cancelar
                         </Button>
                         <Button
-                            onClick={handleCloseModal}
+                            onClick={() => deleteHandler(ingresoId)}
                             className="text-white h-12 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-base px-5 py-2.5 text-center  rounded-xl hover:bg-primario hover:scale-105"
                         >
                             Confirmar

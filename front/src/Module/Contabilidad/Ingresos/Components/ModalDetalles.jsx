@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // iconos
 import { CiDeliveryTruck} from "react-icons/ci";
 import { IoCloseOutline ,IoCalendarOutline } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal, Divider } from "keep-react";
+import { Button, Modal, Divider, toast } from "keep-react";
 
 // data
-import { ingresos } from "../../../../Data/Ingresos";
+import { clearErrors, getIngresoDetails } from "../../../../Redux/actions/ingresoActions";
+
 
 export const ModalDetalles = ({ ingresoId, showModal, handleCloseModal }) => {
-    const ingreso = ingresos[ingresoId - 1];
+   
+
+    const dispatch = useDispatch();
+
+    const { error,  ingreso, loading } = useSelector( state => state.ingresoDetails );
+
+    useEffect( () => {
+        dispatch(getIngresoDetails(ingresoId))
+
+        if(error) 
+            {toast.error(error) , dispatch(clearErrors())}
+    },[dispatch, error])
 
     function convertirFecha(fechaString) {
         // 1. Separar la fecha en partes
@@ -25,6 +39,18 @@ export const ModalDetalles = ({ ingresoId, showModal, handleCloseModal }) => {
         // 3. Formatear la fecha
         return `${dia} de ${mesNombre} de ${anio}`;
       }
+
+      const formatDateWithoutTime = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+0
+    console.log(ingreso)
+
 
     return (
         <>
@@ -50,28 +76,43 @@ export const ModalDetalles = ({ ingresoId, showModal, handleCloseModal }) => {
                             <h1 className="col-span-1 text-xs font-semibold  text-zinc-700">
                                 Categoria :
                             </h1>
-                            <p className="col-span-2 font-semibold text-xs text-primario">
-                                {ingreso.categoria}
-                            </p>
+                            {loading ? (
+                                    <div className=" ssc-line w-16"></div>
+                                ) : (
+                                    <p className="col-span-2 font-semibold text-xs text-primario">
+                                        {ingreso.categoria}
+                                    </p>
+                                )}
+                            
 
                             <h1 className="col-span-1 text-xs font-semibold  text-zinc-700">
                                 Descripcion :
                             </h1>
-                            <p className="col-span-2 font-normal text-xs text-secundario">
-                                {ingreso.descripcion}
-                            </p>
+                            {loading ? (
+                                    <div className=" ssc-line w-16"></div>
+                                ) : (
+                                    <p className="col-span-2 font-semibold text-xs text-primario">
+                                        {ingreso.descripcion}
+                                    </p>
+                                )}
 
                             <Divider className="my-5 col-span-3"/>
 
                             <h1 className="col-span-1 text-xs font-semibold  text-zinc-700">
                                 Monto :
                             </h1>
-                            <div className="col-span-2 font-semibold text-xs text-primario border-blue-300   border w-max py-1  px-2 rounded-full  hover:bg-blue-50">
-                                <p > {ingreso.monto} COP</p>
-                            </div>
+                            {loading ? (
+                                    <div className=" ssc-line w-16"></div>
+                                ) : (
+                                    <p className="col-span-2 font-semibold text-xs text-primario">
+                                        {ingreso.monto}
+                                    </p>
+                                )}
 
-                            <p className="col-span-3 mt-9 font-normal text-end text-xs text-secundario">
-                                {convertirFecha(ingreso.fecha)}
+                            <p className="col-span-3 mt-9 font-normal text-end text-xs ">
+                                {convertirFecha(formatDateWithoutTime(ingreso.fechaModificacion))}
+
+                                
                             </p>
 
                         </div>

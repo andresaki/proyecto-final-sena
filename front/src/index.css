@@ -6,7 +6,8 @@
 @tailwind utilities;
 
 body{
-  
+  --primary-color: #0256A4;
+  --primary-color: #0256A4;
   font-family: "Montserrat", sans-serif;
 }
 

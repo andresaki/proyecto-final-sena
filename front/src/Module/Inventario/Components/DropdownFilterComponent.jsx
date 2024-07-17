@@ -2,8 +2,8 @@ import React from "react";
 
 // iconos
 import { CiFilter } from "react-icons/ci";
-import { BiCategory } from "react-icons/bi";
-import { MdOutlineInventory } from "react-icons/md";
+import { BiCategory, BiFilter, BiFilterAlt } from "react-icons/bi";
+import { MdFilter, MdFilter1, MdFilterAlt, MdFilterAltOff, MdFilterBAndW, MdFilterCenterFocus, MdFilterList, MdOutlineInventory } from "react-icons/md";
 import { MdBrightness1 } from "react-icons/md";
 
 // Keep react
@@ -19,9 +19,9 @@ export const DropdownFilterComponent = ({
     return (
         <Dropdown
             action={
-                <CiFilter
-                    size={32}
-                    className=" rounded-full h-6     w-6  lg:w-5 lg:h-5   fill-gray-600 transition-all duration-300 bg-transparent m-auto"
+                <BiFilterAlt
+
+                    className=" rounded-full h-6     w-6  lg:w-5 lg:h-5   fill-gray-700 transition-all duration-300 bg-transparent m-auto"
                 />
             }
             actionClassName="border-none hover:bg-blue-100  rounded-full flex items-center justify-center  h-10 focus:outline-none w-10 transition-all duration-300"

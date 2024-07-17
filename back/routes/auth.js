@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();  
 
-const { registroUsuario, loginUser, logOut, forgotPassword, resetPassword, getUserProfile, updatePassword, updateProfile, getAllUsers, getUserDetails, updateUserAdmin, deleteUser } = require("../controller/authController");
+const { registroUsuario, loginUser, logOut, forgotPassword, resetPassword, getUserProfile, updatePassword, updateProfile, getAllUsers, getUserDetails, updateUserAdmin, deleteUser, updateEmpresa, updatePrimaryColor } = require("../controller/authController");
 const { isAuthenticatedUser , authorizeRoles} = require("../middleware/auth");
 
 
@@ -12,6 +12,8 @@ router.route('/resetPassword/:token').post(resetPassword)
 router.route('/usuario/profile').get(isAuthenticatedUser, getUserProfile)
 router.route('/usuario/updatePassword').put(isAuthenticatedUser, updatePassword)
 router.route('/usuario/updateProfile').put(isAuthenticatedUser, updateProfile)
+router.route('/usuario/updateEmpresa').put(isAuthenticatedUser, updateEmpresa)
+router.route('/usuario/updatePrimaryColor').put(isAuthenticatedUser, updatePrimaryColor)
 
 
 // Rutas admin 

@@ -48,6 +48,10 @@ const usuarioSchema = new mongoose.Schema({
         validate: [validator.isHexColor ,"por favor ingresa un color hexadecimal valido"],
         default:"#0256A4"
     },
+    direccion:{
+        type:String,
+        default:""
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
 });

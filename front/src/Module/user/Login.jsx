@@ -13,6 +13,7 @@ import { IoEyeOffOutline, IoEyeOutline } from "react-icons/io5";
 import { FaRegUser } from "react-icons/fa6";
 import { LuKeyRound } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "keep-react";
 
 export const Login = () => {
     const [hidenPassword, sethidenPassword] = useState(false);
@@ -34,12 +35,8 @@ export const Login = () => {
             }
         }
 
-
-
-
-
-
         if (error) {
+            toast.error(error)
             dispatch(clearErrors)
         }
     }, [dispatch, isAuthenticated, error])
@@ -47,7 +44,6 @@ export const Login = () => {
     const onSubmitHandler = (e) => {
         e.preventDefault();
         dispatch(login (Email , Password))
-        console.log(Email, Password)
     }
 
     const onVisiblePassword = () => {
@@ -73,7 +69,7 @@ export const Login = () => {
 
                     <form action="" className=" mt-14 col-span-1" onSubmit={onSubmitHandler}>
                         <div className="col-span-2 relative mb-7">
-                            <FaRegUser className="absolute left-4 top-3 fill-primario h-4" />
+                            <FaRegUser className="absolute left-4 top-3 fill-[#0565D4] h-4" />
                             <input
                                 type="email"
                                 name="Email"
@@ -89,16 +85,16 @@ export const Login = () => {
                             {hidenPassword ? (
                                 <IoEyeOutline
                                     onClick={onVisiblePassword}
-                                    className="hover:bg-blue-50 rounded-full  absolute right-4 top-3 text-primario cursor-pointer "
+                                    className="hover:bg-blue-50 rounded-full  absolute right-4 top-3 text-[#0565D4] cursor-pointer "
                                 />
                             ) : (
                                 <IoEyeOffOutline
                                     onClick={onHiddenPassword}
-                                    className="hover:bg-blue-50 rounded-full  absolute right-4 top-3 fill-primario cursor-pointer "
+                                    className="hover:bg-blue-50 rounded-full  absolute right-4 top-3 fill-[#0565D4] cursor-pointer "
                                 />
                             )}
 
-                            <LuKeyRound className="absolute left-4 top-2 text-primario  h-6" />
+                            <LuKeyRound className="absolute left-4 top-2 text-[#0565D4]  h-6" />
                             <input
                                 type={hidenPassword ? "text" : "password"}
                                 name="Password"

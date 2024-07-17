@@ -1,15 +1,15 @@
 import { Pagination } from "keep-react";
 
 export const PaginationComponent = ({
-    productosPorPagina,
+    itemsPorPagina,
     paginaActual,
-    totalProductos,
+    totalItems,
     setpaginaActual,
 }) => {
     const pageNumbers = [];
 
 
-    for (let i = 1; i <= Math.ceil(totalProductos / productosPorPagina); i++) {
+    for (let i = 1; i <= Math.ceil(totalItems / itemsPorPagina); i++) {
         pageNumbers.push(i);
     }
 

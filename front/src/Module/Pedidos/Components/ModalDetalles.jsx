@@ -1,30 +1,65 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // iconos
-import { CiDeliveryTruck} from "react-icons/ci";
-import { IoCloseOutline ,IoCalendarOutline } from "react-icons/io5";
+import { CiDeliveryTruck } from "react-icons/ci";
+import { IoCloseOutline, IoCalendarOutline } from "react-icons/io5";
 
 // Keep react
 import { Button, Modal, Divider } from "keep-react";
-
-// data
-import { pedidos } from "../../../Data/Pedidos";
+import { clearErrors, getPedidoDetails } from "../../../Redux/actions/pedidoActionts";
+import { getClientes } from "../../../Redux/actions/clienteActionts";
 
 export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
-    const pedido = pedidos[pedidoId - 1];
+    const { error, pedido, loading } = useSelector(
+        (state) => state.pedidoDetails
+    );
+    const { clientes } = useSelector((state) => state.clientes);
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(getPedidoDetails(pedidoId));
+        dispatch(getClientes());
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+    }, [dispatch, error]);
+
+    // metodo para obtener el nombre del cliente
+    const getClientNameById = (id) => {
+        const client = clientes.find((client) => client._id === id);
+        return client ? client.nombre : "Eliminado";
+    };
 
     function convertirFecha(fechaString) {
+
+        fechaString.split('T')[0]
         // 1. Separar la fecha en partes
         const [anio, mes, dia] = fechaString.split("-");
-      
+
         // 2. Convertir el mes a nombre (resta 1 porque los meses empiezan en 0)
-        const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
-                       "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+        const meses = [
+            "enero",
+            "febrero",
+            "marzo",
+            "abril",
+            "mayo",
+            "junio",
+            "julio",
+            "agosto",
+            "septiembre",
+            "octubre",
+            "noviembre",
+            "diciembre",
+        ];
         const mesNombre = meses[mes - 1];
-      
+
         // 3. Formatear la fecha
         return `${dia} de ${mesNombre} de ${anio}`;
-      }
+    }
 
     return (
         <>
@@ -46,12 +81,21 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                     <Modal.Content>
                         <div className="grid gap-y-10 mt-20 mx-2 px-2 gap-x-5 grid-cols-3">
                             <div className="col-span-3 mx-3">
-                                <h1 className="block mb-2  text-sm font-bold  text-primario">
-                                    {pedido.nombre}
-                                </h1>
-                                <p className="font-normal text-xs text-secundario">
-                                    {pedido.descripcion}
-                                </p>
+                                {loading ? (
+                                    <div className="ssc-line mb-2 w-20 h-2"></div>
+                                ) : (
+                                    <h1 className="block mb-2  text-sm font-bold  text-primario">
+                                        {pedido.nombre}
+                                    </h1>
+                                )}
+
+                                {loading ? (
+                                    <div className="ssc-line mb-2 w-20 h-2"></div>
+                                ) : (
+                                    <p className="font-normal text-xs ">
+                                        {pedido.descripcion}
+                                    </p>
+                                )}
                             </div>
 
                             <Divider className="col-span-3" />
@@ -60,18 +104,27 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                                 <h1 className="block mb-2  text-xs font-semibold  text-zinc-700">
                                     Cliente
                                 </h1>
-                                <p className="font-normal text-xs text-secundario">
-                                    {pedido.cliente.nombre}
-                                </p>
+
+                                {loading ? (
+                                    <div className="ssc-line mb-2 w-20 h-2"></div>
+                                ) : (
+                                    <p className="font-normal text-xs ">
+                                        {getClientNameById(pedido.cliente)}
+                                    </p>
+                                )}
                             </div>
 
                             <div className="col-span-2">
                                 <h1 className="block mb-2  text-xs font-semibold  text-zinc-700">
                                     Especificaciones del cliente
                                 </h1>
-                                <p className="font-normal text-xs text-secundario">
-                                    {pedido.especificacionesCliente}
-                                </p>
+                                {loading ? (
+                                    <div className="ssc-line mb-2 w-20 h-2"></div>
+                                ) : (
+                                    <p className="font-normal text-xs ">
+                                        {pedido.expecificacionesCliente}
+                                    </p>
+                                )}
                             </div>
 
                             <Divider className="col-span-3" />
@@ -82,13 +135,15 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                                         Estado de entrega
                                     </h1>
 
-                                    {pedido.estadoEntrega ? (
+                                    {loading ? (
+                                        <div className="ssc-line mb-2 w-20 h-2"></div>
+                                    ) : pedido.entregado ? (
                                         <div className=" ml-2 font-semibold text-xs text-primario border-blue-300   border w-max py-1  px-2 rounded-full ">
-                                            <p > Reclamado</p>
+                                            <p> Reclamado</p>
                                         </div>
                                     ) : (
                                         <div className=" ml-2 font-semibold text-xs text-zinc-900 border-gray-300  border w-max py-1  px-2 rounded-full ">
-                                            <p > No reclamado</p>
+                                            <p> No reclamado</p>
                                         </div>
                                     )}
                                 </div>
@@ -97,13 +152,15 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                                     <h1 className="block mb-3  text-xs font-medium  text-black">
                                         Estado de elaboracion
                                     </h1>
-                                    {pedido.estadoProduccion ? (
+                                    {loading ? (
+                                        <div className="ssc-line mb-2 w-20 h-2"></div>
+                                    ) : pedido.terminado ? (
                                         <div className=" ml-2 font-semibold text-xs text-primario border-blue-300  border w-max py-1  px-2 rounded-full ">
-                                            <p > Completado</p>
+                                            <p> Completado</p>
                                         </div>
                                     ) : (
                                         <div className=" ml-2 font-semibold text-xs text-zinc-900 border-gray-300   border w-max py-1  px-2 rounded-full ">
-                                            <p > Pendiente</p>
+                                            <p> Pendiente</p>
                                         </div>
                                     )}
                                 </div>
@@ -112,13 +169,15 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                                     <h1 className="block mb-3  text-xs font-medium  text-black">
                                         Pago
                                     </h1>
-                                    {pedido.pagado ? (
+                                    {loading ? (
+                                        <div className="ssc-line mb-2 w-20 h-2"></div>
+                                    ) : pedido.pagado ? (
                                         <div className=" ml-2 font-semibold text-xs text-primario border-blue-300   border w-max py-1  px-2 rounded-full ">
-                                            <p > Pagado</p>
+                                            <p> Pagado</p>
                                         </div>
                                     ) : (
                                         <div className=" ml-2 font-semibold text-xs text-zinc-900 border-gray-300  border w-max py-1  px-2 rounded-full ">
-                                            <p > No pagado</p>
+                                            <p> No pagado</p>
                                         </div>
                                     )}
                                 </div>
@@ -127,14 +186,42 @@ export const ModalDetalles = ({ pedidoId, showModal, handleCloseModal }) => {
                             <Divider className="col-span-2" />
 
                             <div className="col-span-3 mb-8 mx-3">
-                                    <h1 className="block mb-5  text-sm font-medium  text-zinc-600">
-                                        Recogida
-                                    </h1>
+                                <h1 className="block mb-5  text-sm font-medium  text-zinc-600">
+                                    Recogida
+                                </h1>
 
-                                    <div className="items-center ml-3 flex gap-3 font-normal text-xs mb-3 text-secundario"> <IoCalendarOutline className="fill-primario text-primario" size={18} /> <p> Pedido realizado el {convertirFecha(pedido.fechaPedido)} </p></div>
-                                    <div className="items-center ml-3 flex gap-3 font-normal text-xs text-secundario"> <CiDeliveryTruck className="fill-primario text-primario" size={20}/> <p> Listo para la entrega el {convertirFecha(pedido.fechaEntregaEstimada)}  </p></div>
-                                    
+                                <div className="items-center ml-3 flex gap-3 font-normal text-xs mb-3 ">
+                                    {" "}
+                                    <IoCalendarOutline
+                                        className="fill-primario text-primario"
+                                        size={18}
+                                    />
+                                    {pedido && pedido.fechaCreacion ? (
+                                        <p>
+                                            Pedido realizado el{" "}
+                                            {convertirFecha( pedido.fechaCreacion.split('T')[0])}
+                                        </p>
+                                    ) : (
+                                        <div className="ssc-line mb-2 w-20 h-2"></div>
+                                    )}
                                 </div>
+                                <div className="items-center ml-3 flex gap-3 font-normal text-xs ">
+                                    <CiDeliveryTruck
+                                        className="fill-primario text-primario"
+                                        size={20}
+                                    />
+                                    <p>
+                                        Listo para la entrega el 
+                                        {pedido && pedido.fechaEstimadaEntrega? (
+                                            <p>
+                                                {convertirFecha(  pedido.fechaEstimadaEntrega.split('T')[0])}
+                                            </p>
+                                        ) : (
+                                            <div className="ssc-line mb-2 w-20 h-2"></div>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </Modal.Content>
                 </Modal.Body>

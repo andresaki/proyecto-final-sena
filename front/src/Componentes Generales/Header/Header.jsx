@@ -16,7 +16,7 @@ import { logout } from "../../Redux/actions/userActions";
 
 function Header() {
     const [isOpenHeader, setisOpenHeader] = useState(false);
-    
+    const { user, loading } = useSelector((state) => state.auth);
 
     return (
         <header
@@ -29,10 +29,13 @@ function Header() {
                 {/* Logo de la empresa */}
                 <Link
                     className="flex flex-1 font-medium items-center text-gray-900  cursor-pointer "
-                    to="/Home"
+                    to="/"
                 >
-					<RiStackLine  className="w-10 h-10 text-white p-2  bg-terceario rounded-full" />
-                    <span className="ml-3 text-xl font-medium">Empresa</span>
+					<RiStackLine  className="w-10 h-10 text-white p-2  bg-primario rounded-full" />
+                    
+
+                                         <span className="ml-3 text-xl font-medium">Empresa</span>
+                  
                 </Link>
 
                 {/* boton para abrir menu para pantallas pequeñas */}
@@ -43,7 +46,7 @@ function Header() {
                     type="button"
                 >
 
-					<MdOutlineMenu className="fill-terceario w-6 h-6"/>
+					<MdOutlineMenu className="fill-primario w-6 h-6"/>
                 </button>
 
                 <nav
@@ -84,9 +87,9 @@ const NavLinkComponent = ({ to, text }) => {
         <NavLink
             to={to}
             className={({ isActive }) =>
-                `block my-9 lg:my-0 text-gray-500 text-center cursor-pointer hover:text-gray-900 hover:font-medium hover:border-terceario hover:border-b-2 text-sm  transition-all ${
+                `block my-9 lg:my-0 text-gray-500 text-center cursor-pointer hover:text-gray-900 hover:font-medium hover:border-primario hover:border-b-2 text-sm  transition-all ${
                     isActive
-                        ? " mt-9 lg:mt4 text-gray-900 font-medium border-terceario border-b-2"
+                        ? " mt-9 lg:mt4 text-gray-900 font-medium border-primario border-b-2"
                         : ""
                 }`
             }
@@ -114,7 +117,7 @@ const DropdownComponent = () => {
             action={
                 <UserCircle
                     size={32}
-                    className="hover:bg-blue-100 z-50 rounded-full w-8 h-8   transition-all duration-300 bg-transparent text-terceario m-auto"
+                    className="hover:bg-blue-100 z-50 rounded-full w-8 h-8   transition-all duration-300 bg-transparent text-primario m-auto"
 					
                 />
             }
@@ -126,10 +129,10 @@ const DropdownComponent = () => {
                     <p className=" ml-3 text-sm">Notificaciones</p>
                 </Dropdown.Item>
                 <Dropdown.Item className="pl-4"  >
-                    <a href="configuracion/MiCuenta" className="hover:text-primario   flex items-center text-gray-700 m-0">
+                    <Link to="/configuracion/MiCuenta" className="hover:text-primario   flex items-center text-gray-700 m-0">
                         <RiSettings3Line    size={24}  />
                         <p className=" ml-5 text-sm">Ajustes</p>
-                    </a>
+                    </Link>
                 </Dropdown.Item>
                 <Dropdown.Item onClick={logoutHandler} className="hover:text-primario pl-5   flex items-center text-gray-700 ">
                     <MdLogout   size={20} fontWeight={100} className="stroke-0 " />

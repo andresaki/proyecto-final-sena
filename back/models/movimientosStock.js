@@ -30,6 +30,12 @@ const movimientoStockSchema = mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Producto',
         required: true
+    },
+
+    nombreproducto:{
+        type:String,
+        required:[true],
+        trim:true
     }
 
 })

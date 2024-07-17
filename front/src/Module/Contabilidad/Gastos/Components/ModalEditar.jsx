@@ -1,37 +1,94 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { NumericFormat } from "react-number-format";
+import { MetaData } from "../../../../Componentes Generales/MetaData/MetaData";
 
-// iconos
-import {  MdOutlineAdd} from "react-icons/md";
+
 
 import { IoCloseOutline  } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal, Divider } from "keep-react";
+import { Button, Modal, toast } from "keep-react";
+import { clearErrors, getGastoDetails, getGastos, updateGasto } from "../../../../Redux/actions/gastoActions";
+import { UPDATE_GASTO_RESET } from "../../../../Redux/constants/gastoConstants";
 
-// Hook
-import { useForm } from "../../../../Hooks/useForm";
 
-// data
-import { ingresos } from "../../../../Data/Ingresos";
+export const ModalEditar = ({ gastoId, showModal, handleCloseModal }) => {
 
-export const ModalEditar = ({ ingresoId, showModal, handleCloseModal }) => {
-    const ingreso = ingresos[ingresoId - 1];
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+    
+    const { loading,  isUpdated, error: updateError } = useSelector( state => state.updateGasto );
+    const { error,  gasto } = useSelector( state => state.gastoDetails );
 
-    const estructura = {
-        categoria: ingreso.categoria,
-        descripcion: ingreso.descripcion,
-        monto: ingreso.monto
-    };
-    const { formState, onInputChange } = useForm(estructura);
-    const { categoria, descripcion, monto } = formState;
+    const [categoria, setCategoria] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [monto, setMonto] = useState(0);
+
+  
+
+    useEffect(() => {
+
+        if (gasto && gasto._id !== gastoId ) {
+            dispatch(getGastoDetails(gastoId));
+        } else {
+            setMonto(gasto.monto)
+            setCategoria(gasto.categoria)
+            setDescripcion(gasto.descripcion)
+        }
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+  
+        if (updateError) {
+            toast.error(updateError);
+            dispatch(clearErrors());
+        }
+
+        if (isUpdated) {
+            toast.success("Gasto editado correctamente");
+            dispatch(getGastos()); 
+            dispatch({ type: UPDATE_GASTO_RESET });
+            handleCloseModal();
+            dispatch(getGastos())
+
+            setCategoria("")
+            setMonto(0)
+            setDescripcion("")
+        }
+    }, [dispatch, gastoId, gasto, error, updateError, isUpdated, toast]);
+
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("categoria", categoria);
+        formData.set("descripcion", descripcion);
+        formData.set("monto", monto);
+
+        dispatch(updateGasto(gasto._id, formData));
     };
+
+    const categorias = [
+        "Compra de insumos",
+        "Servicios",
+        "Gastos operativos",
+        "Impuestos y licencias",
+        "Tecnologia",
+        "Financieros",
+        "Otros gastos",
+    ];
+
 
     return (
         <>
+
+            <MetaData title={"Editar gasto"}/>
             <Modal isOpen={showModal} onClose={handleCloseModal}>
                 <Modal.Body className="space-y-3  w-[450px] max-h-[900px] overflow-auto rounded-md p-6">
                     <div>
@@ -60,14 +117,25 @@ export const ModalEditar = ({ ingresoId, showModal, handleCloseModal }) => {
                                     >
                                         Monto
                                     </label>
-                                    <input
-                                        placeholder="Ingresa el monto"
-                                        type="text"
+                                    <NumericFormat
                                         name="monto"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2 "
-                                        required
                                         value={monto}
-                                        onChange={onInputChange}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setMonto(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-5/6 p-3 focus:ring-primario focus:ring-2 "
+                                        thousandSeparator={true}
+                                        prefix={"$  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
+                                        required
+                                        placeholder="Ingrese el gasto"
                                     />
                                 </div>
 
@@ -81,34 +149,21 @@ export const ModalEditar = ({ ingresoId, showModal, handleCloseModal }) => {
                                     </label>
                                     <select
                                         value={categoria}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setCategoria(e.target.value)
+                                        }
                                         name="categoria"
-                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                        className="outline-none border  border-bordeInput text-gray-800 text-xs rounded-md block w-6/6 p-3 focus:ring-primario focus:ring-2"
                                     >
-                                        <option className="py-2 text-sm text-secundario" value={"no"}>
+                                        <option className="py-2 text-sm " >
                                             Selecciona una categoria
                                         </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Salario
+                                        
+                                        {categorias.map((c) => (
+                                            <option key={c} className="py-2 text-sm " value={c}>
+                                            {c}
                                         </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Inversion
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Alquiler
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Venta
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Pedido
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Servicio
-                                        </option>
-                                        <option className="py-2 text-sm text-secundario" value={"valueee"}>
-                                            Otro
-                                        </option>
+                                        ))}
                                     </select>
                                 </div>
 
@@ -124,9 +179,11 @@ export const ModalEditar = ({ ingresoId, showModal, handleCloseModal }) => {
                                         type="text"
                                         name="descripcion"
                                         className="outline-none border min-h-40 border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                                        placeholder="Agrega una descripcion"
+                                        placeholder="Agrega una descripcion sobre el gasto"
                                         value={descripcion}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setDescripcion(e.target.value)
+                                        }
                                     />
                                 </div>
 

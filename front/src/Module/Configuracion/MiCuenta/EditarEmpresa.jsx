@@ -1,16 +1,63 @@
-import React from "react";
-import Fondo from "./Fondo.png";
-import { HiOutlineUserCircle } from "react-icons/hi2";
+import React, { useEffect, useState } from "react";
 import { Buildings } from "phosphor-react";
 import NavConfiguracion from "../NavConfiguracion";
-import { useSelector } from "react-redux";
-import { Button } from "keep-react";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, toast } from "keep-react";
+import { MetaData } from "../../../Componentes Generales/MetaData/MetaData";
+
+import { useNavigate } from "react-router-dom";
+import { UPDATE_COMPANY_RESET } from "../../../Redux/constants/userConstants";
+import {
+    clearErrors,
+    loadUser,
+    updateCompany,
+} from "../../../Redux/actions/userActions";
 
 export const EditarEmpresa = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { error, isUpdated } = useSelector((state) => state.user);
     const { user, loading } = useSelector((state) => state.auth);
+
+    const [NombreEmpresa, setNombreEmpresa] = useState("");
+    const [CorreoEmpresa, setCorreoEmpresa] = useState("");
+    const [Direccion, setDireccion] = useState("");
+
+    useEffect(() => {
+        if (user) {
+            setNombreEmpresa(user.nombreEmpresa);
+            setCorreoEmpresa(user.correoEmpresa);
+            setDireccion(user.direccion);
+        }
+
+        if (error) {
+            toast.error(error);
+            dispatch(clearErrors());
+        }
+        if (isUpdated) {
+            toast.success("Datos de la empresa actualizados correctamente");
+            dispatch(loadUser());
+
+            dispatch({
+                type: UPDATE_COMPANY_RESET,
+            });
+        }
+    }, [dispatch, toast, error, isUpdated]);
+
+    const onSubmit = (event) => {
+        event.preventDefault();
+
+        const formData = new FormData();
+
+        formData.set("nombreEmpresa", NombreEmpresa);
+        formData.set("correoEmpresa", CorreoEmpresa);
+        formData.set("direccion", Direccion);
+
+        dispatch(updateCompany(formData));
+    };
     return (
         <NavConfiguracion>
+            <MetaData title={"Actualizar datos de empresa"} />
             <main className="grid lg:grid-cols-2 grid-cols-1 gap-24">
                 {/* formualtio */}
                 <div className="w-full md:max-w-md  xl:max-w-4xl ">
@@ -23,52 +70,61 @@ export const EditarEmpresa = () => {
                         </p>
                     </div>
 
-                    <form className="mt-14 space-y-8 xl:space-y-0 xl:grid xl:grid-cols-2 gap-8">
+                    <form
+                        onSubmit={onSubmit}
+                        className="mt-14 space-y-8 xl:space-y-0 xl:grid xl:grid-cols-2 gap-8"
+                    >
                         <div className="space-y-2">
                             <label
                                 className="block  font-montserrat text-xs font-medium text-black"
-                                htmlFor="nombre"
+                                htmlFor="NombreEmpresa"
                             >
                                 Nombre de la empresa
                             </label>
                             <input
                                 className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
-                                id="nombre"
-                                placeholder="nombre"
+                                id="NombreEmpresa"
                                 type="text"
-                                name="nombre"
+                                name="NombreEmpresa"
+                                value={NombreEmpresa}
+                                onChange={(e) => setNombreEmpresa(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label
                                 className="block  font-montserrat text-xs font-medium text-black"
-                                htmlFor="email"
+                                htmlFor="CorreoEmpresa"
                             >
                                 Email de la empresa
                             </label>
                             <input
                                 className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
-                                id="email"
-                                placeholder="email"
+                                id="CorreoEmpresa"
+                                placeholder="email de la empresa"
                                 type="email"
-                                name="email"
+                                name="CorreoEmpresa"
+                                value={CorreoEmpresa}
+                                onChange={(e) => setCorreoEmpresa(e.target.value)}
                             />
                         </div>
 
                         <div className="space-y-2">
                             <label
                                 className="block  font-montserrat text-xs font-medium text-black"
-                                htmlFor="subscription-expiry"
+                                htmlFor="Direccion"
                             >
                                 Direccion
                             </label>
                             <input
                                 className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2"
-                                id="direccion"
+                                id="Direccion"
                                 placeholder="direccion"
                                 type="text"
-                                name="direccion"
+                                name="Direccion"
+
+                                value={Direccion}
+                                onChange={(e) => setDireccion(e.target.value)}
                             />
                         </div>
 
@@ -84,14 +140,15 @@ export const EditarEmpresa = () => {
                 </div>
 
                 <div className="grid gap-7">
-
                     <div className="w-full max-w-md shadow-md rounded-b-sm">
-                        <div className="relative h-24 overflow-hidden rounded-t-lg">
-                            <img
+                        <div className="relative h-16 overflow-hidden rounded-t-lg">
+                            {/* <img
                                 src={Fondo}
                                 alt="Backgroud"
                                 className="h-full w-full object-cover object-bottom filter:hue-rotate(80deg) "
-                            />
+                            /> */}
+
+                            <div className="h-full w-full object-cover object-bottom bg-primario  "></div>
                         </div>
 
                         {/* Card- Body */}
@@ -112,10 +169,9 @@ export const EditarEmpresa = () => {
                                         </div>
                                     )}
                                 </div>
-                                
                             </div>
 
-                            <div className="mt-6 rounded-lg bg-blue-50 p-4 ">
+                            <div className="mt-6 rounded-lg  p-4 ">
                                 <div className="grid gap-3 text-sm">
                                     <div className="flex items-center justify-between">
                                         <div className="text-[#494949] text-xs font-semibold">
@@ -138,7 +194,7 @@ export const EditarEmpresa = () => {
                                             <div className=" ssc-line w-16"></div>
                                         ) : (
                                             <div className="text-xs text-[#494949] font-medium">
-                                                john.doe@example.com
+                                                {user.correoEmpresa}
                                             </div>
                                         )}
                                     </div>
@@ -150,7 +206,7 @@ export const EditarEmpresa = () => {
                                             <div className=" ssc-line w-16"></div>
                                         ) : (
                                             <div className="text-xs text-[#494949] font-medium">
-                                                Direccion
+                                                {user.direccion}
                                             </div>
                                         )}
                                     </div>
@@ -158,7 +214,7 @@ export const EditarEmpresa = () => {
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
             </main>
         </NavConfiguracion>
     );

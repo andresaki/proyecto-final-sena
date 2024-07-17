@@ -36,13 +36,7 @@ const invetarioSchema = mongoose.Schema({
         maxLength:[8,"El precio del producto no puede estar por encima de 99'999.999"],
         default: 0 
     },
-    proveedor:{
-        type:String,
-        required:[true, "Por favor registra el proveedor"],
-        trim:true,
-        maxLength:[150,"El nombre del proveedor no debe exceder los 120 caracteres"]
-    },
-    
+        
     fechaCreacion:{
         type:Date,
         default:Date.now

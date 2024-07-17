@@ -1,21 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {clearErrors, getPedidos, newPedido} from '../../../Redux/actions/pedidoActionts'
 
 // iconos
-import { MdOutlineAdd} from "react-icons/md";
+import { MdOutlineAdd } from "react-icons/md";
 
 import { IoCloseOutline } from "react-icons/io5";
 
 // Keep react
-import { Button, Modal, Divider } from "keep-react";
+import { Button, Modal, Divider, toast } from "keep-react";
 
 // Hook
-import { useForm } from "../../../Hooks/useForm";
-
+import { NumericFormat } from "react-number-format";
+import { NEW_PEDIDO_RESET } from "../../../Redux/constants/pedidoConstants";
+import { getClientes } from "../../../Redux/actions/clienteActionts";
 
 export const ModalNewComponent = () => {
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const openModal = () => {
         setIsOpen(true);
     };
@@ -23,31 +27,75 @@ export const ModalNewComponent = () => {
         setIsOpen(false);
     };
 
-    const estructura = {
-        nombre: "",
-        descripcion: "",
-        especificacionespedido: "",
-        estadoProduccion: false, //No Completado
-        estadoEntrega: false, // No reclamado
-        pagado: false,
-        costoTotal: 0,
-        cliente: "Juan Pérez",
-        fechaEntregaEstimada: "",
-        fechaPedido: "2024-04-25",
-    };
-    const { formState, onInputChange } = useForm(estructura);
-    const {
-        nombre,
-        descripcion,
-        especificacionespedido,
-        costoTotal,
-        fechaEntregaEstimada,
-    } = formState;
+
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const { error, success } = useSelector( (state) => state.newPedido );
+    const { clientes, error : errorClientes, loading } = useSelector((state) => state.clientes);
+
+    const [nombre, setNombre] = useState("");
+    const [descripcion, setDescripcion] = useState("");
+    const [expecificacionesCliente, setExpecificacionesCliente] = useState("");
+    const [pagado, setPagado] = useState(false);
+    const [costoTotal, setCostoTotal] = useState(0);
+    const [fechaEstimadaEntrega, setFechaEstimadaEntrega] = useState("");
+    const [cliente, setCliente] = useState("");
+
+
+    useEffect ( () => {
+        dispatch(getClientes())
+
+        if (errorClientes){
+            toast.error(errorClientes)
+            dispatch(clearErrors())
+        }
+    },[dispatch, errorClientes])
+
+
+    useEffect(() => {
+
+        if (error) {
+            toast.error(error)
+            dispatch(clearErrors())
+        }
+
+        if (success) {
+            toast.success("Pedido registrado correctamente");
+            navigate("/Pedidos");
+            closeModal();
+            dispatch({ type: NEW_PEDIDO_RESET });
+            dispatch(getPedidos())
+
+            setNombre("")
+            setDescripcion("")
+            setExpecificacionesCliente("")
+            setPagado("")
+            setCostoTotal("")
+            setFechaEstimadaEntrega("")
+            setCliente("")
+        }
+
+    }, [dispatch, toast, error, success])
+
 
     const onSubmit = (event) => {
         event.preventDefault();
-        console.log(formState);
+
+        const formData = new FormData();
+        formData.set("nombre", nombre);
+        formData.set("descripcion", descripcion);
+        formData.set("expecificacionesCliente", expecificacionesCliente);
+        formData.set("pagado", pagado);
+        formData.set("costoTotal", costoTotal);
+        formData.set("fechaEstimadaEntrega", fechaEstimadaEntrega);
+        formData.set("cliente", cliente);
+
+        dispatch(newPedido(formData));
+        dispatch(getPedidos());
     };
+
+
 
     return (
         <>
@@ -93,7 +141,9 @@ export const ModalNewComponent = () => {
                                         placeholder="ej: estampado , confeccion , areglo . . . "
                                         required
                                         value={nombre}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setNombre(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -111,7 +161,9 @@ export const ModalNewComponent = () => {
                                         placeholder="Ingrese los detalles o la descripcion del pedido"
                                         required
                                         value={descripcion}
-                                        onChange={onInputChange}
+                                        onChange={(e) =>
+                                            setDescripcion(e.target.value)
+                                        }
                                     />
                                 </div>
 
@@ -127,8 +179,42 @@ export const ModalNewComponent = () => {
                                         name="especificacionespedido"
                                         className="outline-none border min-h-40 border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
                                         placeholder="Ingrese las especificaciones o requerimientos que tiene el pedido"
-                                        value={especificacionespedido}
-                                        onChange={onInputChange}
+                                        value={expecificacionesCliente}
+                                        onChange={(e) =>
+                                            setExpecificacionesCliente(
+                                                e.target.value
+                                            )
+                                        }
+                                    />
+                                </div>
+
+
+                                <div className="col-span-2">
+                                    <label
+                                        htmlFor="costoTotal"
+                                        className="block mb-3  text-xs font-medium text-black"
+                                    >
+                                        Costo total
+                                    </label>
+                                    <NumericFormat
+                                        name="costoTotal"
+                                        value={costoTotal}
+                                        onValueChange={(values) => {
+                                            const { floatValue } = values;
+                                            setCostoTotal(
+                                                floatValue !== undefined
+                                                    ? floatValue
+                                                    : 0
+                                            );
+                                        }}
+                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
+                                        thousandSeparator={true}
+                                        prefix={"$  "}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                        allowNegative={false}
+                                        required
+                                        placeholder="Ingrese el precio"
                                     />
                                 </div>
 
@@ -141,93 +227,86 @@ export const ModalNewComponent = () => {
                                     </label>
                                     <input
                                         type="date"
-                                        className="outline-none border min-h-10  border-bordeInput text-gray-800 text-xs rounded-md block w-2/3 p-3 focus:ring-primario focus:ring-2 "
+                                        className="outline-none border min-h-10  border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
                                         name="fechaEntregaEstimada"
-                                        value={fechaEntregaEstimada}
-                                        onChange={onInputChange}
+                                        value={fechaEstimadaEntrega}
+                                        onChange={(e) =>
+                                            setFechaEstimadaEntrega(
+                                                e.target.value
+                                            )
+                                        }
                                     />
                                 </div>
 
-                                <div className="col-span-2">
-                                    <label
-                                        htmlFor="costoTotal"
-                                        className="block mb-3  text-xs font-medium text-black"
-                                    >
-                                        Costo total
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="costoTotal"
-                                        className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-2/3 p-3 focus:ring-primario focus:ring-2 "
-                                        required
-                                        value={costoTotal}
-                                        onChange={onInputChange}
-                                    />
-                                </div>
+                               
 
-                                <div className="col-span-2 mt-9 ">
+                                <div className="col-span-1  ">
                                     <label
-                                        htmlFor="proveedor"
+                                        htmlFor="pagado"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Pagado
                                     </label>
                                     <select
-                                        name="proveedor"
+                                        name="pagado"
+                                        value={pagado}
+                                        onChange={(e) =>
+                                            setPagado(e.target.value)
+                                        }
                                         className="outline-none border w-2/3 border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
                                     >
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={false}
+                                            className="py-2 text-sm "
+                                            value={false}
                                         >
                                             No
                                         </option>
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={true}
+                                            className="py-2 text-sm "
+                                            value={true}
                                         >
                                             Si
                                         </option>
                                     </select>
                                 </div>
 
-                                <Divider className="col-span-2 my-10" />
+                                <Divider className="col-span-2 my-5" />
 
-                                <div className="col-span-1  ">
+                                <div className="col-span-2  ">
                                     <label
-                                        htmlFor="proveedor"
+                                        htmlFor="cliente"
                                         className="block mb-3 font-montserrat text-xs font-medium text-black"
                                     >
                                         Cliente
                                     </label>
                                     <select
-                                        name="proveedor"
-                                        className="outline-none border w-4/5 border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
+                                        name="cliente"
+                                        value={cliente}
+                                        onChange={(e) =>
+                                            setCliente(e.target.value)
+                                        }
+                                        className="outline-none border w-full border-bordeInput text-gray-800 text-xs rounded-md block  p-3 focus:ring-primario focus:ring-2"
                                     >
                                         <option
-                                            className="py-2 text-sm text-secundario"
-                                            defaultValue={"1"}
+                                            className="py-2 text-sm "
                                         >
                                             seleccione
                                         </option>
+
+                                        {!clientes ? (
+                                            <></>
+                                        ) : (
+                                            clientes.map((cliente) => (
+                                                <option
+                                                    key={cliente._id}
+                                                    className="py-2 text-sm"
+                                                    value={cliente._id}
+                                                >
+                                                    {cliente.nombre}
+                                                </option>
+                                            ))
+                                        )}
                                     </select>
-                                </div>
-
-                                <div className="col-span-1 relative  pt-8  ">
-                                    <p className="absolute -left-4 bottom-3">
-                                        o
-                                    </p>
-
-                                    <button
-                                        type="button"
-                                        className="hover:scale-105 ml-auto border w-5/6 transition-all duration-200 h-10 flex items-center justify-evenly text-white font-normal text-sm bg-primario rounded"
-                                    >
-                                        <MdOutlineAdd className="block text-2xl w-5 h-5  fill-white  lg:w-5" />
-
-                                        <p className="sm:block  text-xs ">
-                                            Registrar pedido
-                                        </p>
-                                    </button>
                                 </div>
 
                                 <Modal.Footer className=" col-span-2 flex justify-end w-full mt-14">

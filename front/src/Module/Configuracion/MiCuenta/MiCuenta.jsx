@@ -1,29 +1,38 @@
 import React from "react";
-import Fondo from "./Fondo.png";
+import { MetaData } from "../../../Componentes Generales/MetaData/MetaData";
+import { useDispatch, useSelector } from "react-redux";
+import NavConfiguracion from "../NavConfiguracion";
+
+
+// styles
 import { HiOutlineUserCircle } from "react-icons/hi2";
 import { Buildings } from "phosphor-react";
-import NavConfiguracion from "../NavConfiguracion";
-import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
+
+// import Fondo from "./Fondo.png";
 
 function MiCuenta() {
     const { user, loading } = useSelector((state) => state.auth);
+    
 
     console.log(user);
 
     return (
         <NavConfiguracion>
+            <MetaData title={"Mi cuenta"}/>
             <main className="grid grid-cols-1 gap-24">
                 <div className="grid gap-7">
                     <h1 className="font-medium text-xl">Mi cuenta</h1>
 
                     <div className="w-full max-w-[600px]  shadow-md rounded-b-sm">
-                        <div className="relative h-24 overflow-hidden rounded-t-lg">
-                            <img
+                        <div className="relative h-16 overflow-hidden rounded-t-lg">
+                            {/* <img
                                 src={Fondo}
                                 alt="Backgroud"
                                 className="h-full w-full object-cover object-bottom  "
-                            />
+                            /> */}
+                            <div className="h-full w-full object-cover object-bottom bg-primario  "></div>
                         </div>
 
                         {/* Card- Body */}
@@ -48,7 +57,7 @@ function MiCuenta() {
                                 </Link>
                             </div>
 
-                            <div className="mt-6 rounded-lg bg-blue-50 p-4 ">
+                            <div className="mt-6 rounded-lg  p-4 ">
                                 <div className="grid gap-3 text-sm">
                                     <div className="flex items-center justify-between">
                                         <div className="text-[#494949] text-xs font-semibold">
@@ -98,12 +107,14 @@ function MiCuenta() {
                     <h1 className="font-medium text-xl">Empresa</h1>
 
                     <div className="w-full max-w-[600px] shadow-md rounded-b-sm">
-                        <div className="relative h-24 overflow-hidden rounded-t-lg">
-                            <img
+                        <div className="relative h-16 overflow-hidden rounded-t-lg">
+                            {/* <img
                                 src={Fondo}
                                 alt="Backgroud"
                                 className="h-full w-full object-cover object-bottom filter:hue-rotate(80deg) "
-                            />
+                            /> */}
+
+                            <div className="h-full w-full object-cover object-bottom bg-primario  "></div>
                         </div>
 
                         {/* Card- Body */}
@@ -124,12 +135,15 @@ function MiCuenta() {
                                         </div>
                                     )}
                                 </div>
-                                <Link to={"EditarEmpresa"} className="font-normal text-xs text-center  bg-primario px-2  py-1 text-white rounded-md mt-5">
+                                <Link
+                                    to={"EditarEmpresa"}
+                                    className="font-normal text-xs text-center  bg-primario px-2  py-1 text-white rounded-md mt-5"
+                                >
                                     Editar
                                 </Link>
                             </div>
 
-                            <div className="mt-6 rounded-lg bg-blue-50 p-4 ">
+                            <div className="mt-6 rounded-lg  p-4 ">
                                 <div className="grid gap-3 text-sm">
                                     <div className="flex items-center justify-between">
                                         <div className="text-[#494949] text-xs font-semibold">
@@ -152,7 +166,7 @@ function MiCuenta() {
                                             <div className=" ssc-line w-16"></div>
                                         ) : (
                                             <div className="text-xs text-[#494949] font-medium">
-                                                john.doe@example.com
+                                                {user.correoEmpresa}
                                             </div>
                                         )}
                                     </div>
@@ -164,7 +178,7 @@ function MiCuenta() {
                                             <div className=" ssc-line w-16"></div>
                                         ) : (
                                             <div className="text-xs text-[#494949] font-medium">
-                                                Direccion
+                                                {user.direccion}
                                             </div>
                                         )}
                                     </div>

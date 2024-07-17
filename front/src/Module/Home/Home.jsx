@@ -1,64 +1,91 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { UserCircle } from "phosphor-react";
-import { AreaChart } from "keep-react";
-
+import { Link, useNavigate } from "react-router-dom";
+import {
+    AreaChart,
+    
+} from "keep-react";
 import { useDispatch, useSelector } from "react-redux";
 import { getProducts } from "../../Redux/actions/productoActions";
-import { IoBagCheck, IoBagHandle, IoBagRemove, IoHandRight } from "react-icons/io5";
+import {
+    IoBagCheck,
+    IoBagHandle,
+    IoBagRemove,
+    IoHandRight,
+} from "react-icons/io5";
+import { getPedidos, setPedidoFilter } from "../../Redux/actions/pedidoActionts";
+import { MetaData } from "../../Componentes Generales/MetaData/MetaData";
 
 function Home() {
-    // const dispatch = useDispatch();
-    // const { productos, error, loading , cantidad} = useSelector( (state) => state.products );
+    const [colorPrimario, setColorPrimario] = useState("");
+    useEffect(() => {
+        const rootStyles = getComputedStyle(document.body);
+        const colorPrimario = rootStyles.getPropertyValue("--primary-color");
+        setColorPrimario(colorPrimario);
+    });
+
+    const navigate = useNavigate();
+
+    const dispatch = useDispatch();
+
+    // selector
+    const { pedidos, error, loading } = useSelector((state) => state.pedidos);
+
+    const [pedidosToatels, setPedidosToatels] = useState("");
+    const [pedidosPendientes, setPedidosPendientes] = useState("");
+    const [pedidosCompletados, setPedidosCompletados] = useState("");
+    const [pedidosNoReclamados, setpedidosNoReclamados] = useState("");
+
+    useEffect(() => {
+        dispatch(getPedidos());
+    }, [dispatch]);
+
+    useEffect(() => {
+        let resultado = [...pedidos];
+
+        
+            setPedidosToatels(resultado.length)
+
+            setPedidosCompletados(resultado.filter(
+                (pedido) => pedido.terminado === true
+            ).length)
+
+            setPedidosPendientes(resultado.filter(
+                (pedido) => pedido.terminado === false
+            ).length)
+
+        
+            setpedidosNoReclamados(resultado.filter(
+                (pedido) => pedido.entregado === false
+            ).length)
+
+    }, [pedidos, pedidosCompletados, pedidosPendientes, pedidosToatels, pedidosNoReclamados]);
 
 
-    // useEffect(() => {
-    //     dispatch(getProducts()); // Despachar la acción para obtener productos
-    // }, [dispatch]);
 
-    // const pedidosCompletados = pedidos.filter(
-    //     (pedido) => pedido.estadoProduccion === 1
-    // ).length;
-    // const pedidosPendientes = pedidos.filter(
-    //     (pedido) => pedido.estadoProduccion === 0
-    // ).length;
-    // const pedidosReclamados = pedidos.filter(
-    //     (pedido) => pedido.estadoEntrega === 1
-    // ).length;
-    // const pedidosTotales = pedidos.length;
+    const handleClick = (filter) => {
+        dispatch(setPedidoFilter(filter));
+        navigate("/Pedidos")
+    };
 
-
-
-
-    
 
     return (
-        <main className="container mx-auto pt-20" >
+        <main className="container mx-auto pt-20">
+            <MetaData title={"Home"} />
             <div>
                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 p-4 md:p-6 mt-12">
-                    <Card
-                        texto={"Total de pedidos"}
-                        informacion={4}
-                    >
+                   
+                   
+                    <Card  texto={"Total de pedidos"} informacion={pedidosToatels} to="/Pedidos">
                         <IoBagHandle size={20} className="text-primario" />{" "}
                     </Card>
-                    <Card
-                        texto={"Pedidos completados"}
-                        informacion={3}
-                    >
+                    <Card onClick={() => handleClick('Completados')} texto={"Pedidos completados"} informacion={pedidosCompletados}>
                         <IoBagCheck size={20} className="text-primario" />{" "}
                     </Card>
-                    <Card
-                        texto={"Pedidos pendientes"}
-                        informacion={1}
-                    >
+                    <Card onClick={() => handleClick('pendiente')} texto={"Pedidos pendientes"} informacion={pedidosPendientes}>
                         <IoBagRemove size={20} className="text-primario" />{" "}
                     </Card>
-                    <Card
-                        texto={"Pedidos reclamados"}
-                        informacion={2}
-                    >
+                    <Card onClick={() => handleClick('NoReclamado')} texto={"Pedidos no reclamados"} informacion={pedidosNoReclamados}>
                         <IoHandRight size={20} className="text-primario" />{" "}
                     </Card>
 
@@ -78,8 +105,8 @@ function Home() {
                                 YAxisDataKey="y"
                                 showTooltip={true}
                                 chartColor="#16A085"
-                                secondaryChartColor="#2E86C1"
-                                secondaryAreaStoke="#004DB3"
+                                secondaryChartColor={colorPrimario.trim()}
+                                secondaryAreaStoke={colorPrimario.trim()}
                             />
                         </CardArea>
                     </div>
@@ -98,21 +125,23 @@ function Home() {
                                 XAxisDataKey="x"
                                 YAxisDataKey="y"
                                 showTooltip={true}
-                                chartColor="#16A085"
-                                secondaryChartColor="#2E86C1"
-                                secondaryAreaStoke="#004DB3"
+                                secondaryAreaStoke={colorPrimario.trim()}
+                                          
                             />
+
+
                         </CardArea>
                     </div>
+                    
                 </div>
             </div>
         </main>
     );
 }
 
-const Card = ({ informacion, texto, color, to = "/", children }) => {
+const Card = ({ informacion, texto, color, to = "/", children , onClick}) => {
     return (
-        <div className="shadow-sm border p-6 rounded-lg">
+        <div className="shadow-sm border p-6 rounded-lg" onClick={onClick}>
             <Link to={to}>
                 <div className="flex flex-row items-center justify-between pb-2">
                     <h1 className="text-sm font-medium"> {texto}</h1>
@@ -123,7 +152,6 @@ const Card = ({ informacion, texto, color, to = "/", children }) => {
                         {informacion}
                     </h2>
                     <p className="text-xs text-gray-500 ">
-                        {" "}
                         +12.5% desde el mes pasado
                     </p>
                 </div>

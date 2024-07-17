@@ -1,20 +1,44 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 // iconos
 import { AiOutlineDelete } from "react-icons/ai";
 
 // Keep react
-import { Button, Modal } from "keep-react";
+import { Button, Modal, toast } from "keep-react";
 
 // data
-import { productos } from "../../../Data/Productos";
+import { deleteProduct, getProducts } from "../../../Redux/actions/productoActions";
+import { useNavigate } from "react-router-dom";
+import { DELETE_PRODUCT_RESET } from "../../../Redux/constants/productoConstants";
 
 export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
 
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
     const {productos} = useSelector(state => state.products)
 
+    const { success } = useSelector(    (state) => state.product  );
+
     const producto = productos.find(p => p._id === productoId);
+    console.log(success)
+    useEffect(() => {
+       
+        if (success) {
+            toast.success("producto eliminado correctamente")
+            dispatch({type: DELETE_PRODUCT_RESET})
+            dispatch(getProducts());
+            handleCloseModal();
+            navigate("/Inventario");
+
+        }
+    }, [dispatch, toast, success]);
+    
+    
+    const deleteProductHandler = (id) => {
+        dispatch(deleteProduct(id))
+    }
+
 
     return (
         <>
@@ -42,7 +66,7 @@ export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
                             cancelar
                         </Button>
                         <Button
-                            onClick={handleCloseModal}
+                            onClick={() => deleteProductHandler(productoId)}
                             className="text-white h-12 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-base px-5 py-2.5 text-center  rounded-xl hover:bg-primario hover:scale-105"
                         >
                             Confirmar

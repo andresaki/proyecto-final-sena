@@ -11,6 +11,7 @@ import { CgWebsite } from "react-icons/cg";
 import { BiLock, BiSolidDashboard, BiUser, BiUserPlus } from "react-icons/bi";
 import {
     MdAccessibility,
+    MdClose,
     MdNotifications,
     MdNotificationsNone,
     MdOutlineKeyboardAlt,
@@ -35,22 +36,34 @@ const NavConfiguracion = ({ children }) => {
                         </div>
 
                         <nav className="flex flex-col space-y-2">
-                            <Link
+                            <NavLink
+                            
                                 to={"/configuracion/MiCuenta"}
-                                className="flex items-center  text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-8  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
                                 
                             >
                                 <BiUser className="h-5 w-5" />
                                 Mi cuenta
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
-                                
+                            </NavLink>
+                            <NavLink
+                                to={"/configuracion/Seguridad"}
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-8  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
                             >
                                 <BiLock className="h-5 w-5" />
                                 Seguridad
-                            </Link>
+                            </NavLink>
                         </nav>
 
                         <div className="mb-4 mt-16 flex items-center gap-2">
@@ -60,45 +73,72 @@ const NavConfiguracion = ({ children }) => {
                         </div>
 
                         <nav className="flex flex-col space-y-2">
-                            <Link
-                                href="#"
-                                className="flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
+                            <NavLink
+                                to={"/configuracion/Apariencia"}
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-8  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
+                               
                                 
                             >
                                 <CgWebsite className="h-5 w-5" />
                                 Apariencia
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
-                               
+                            </NavLink>
+                            <NavLink
+                                to={"/configuracion/Accesibilidad"}
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-8  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
                             >
                                 <MdAccessibility className="h-5 w-5" />
                                 Accesibilidad
-                            </Link>
-                            <Link
-                                href="#"
-                                className="flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
-                                
+                            </NavLink>
+                            <NavLink
+                                to={"/configuracion/Notificaciones"}
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-8  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
                             >
                                 <MdNotificationsNone className="h-5 w-5" />
                                 Notificaciones
-                            </Link>
+                            </NavLink>
 
-                            <Link
-                                href="#"
-                                className="flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-50 hover:text-primario hover:font-semibold"
-                                
+                            <NavLink
+                                to={"/configuracion/AtajosTeclado"}
+                                className={({ isActive }) =>
+                                    `flex items-center text-stone-700 gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors mr-6  hover:text-primario hover:font-semibold ${
+                                        isActive
+                                            ? " font-semibold bg-primario text-white  "
+                                            : ""
+                                    }`
+                                }
                             >
                                 <MdOutlineKeyboardAlt className="h-5 w-5" />
                                 Atajos de teclado
-                            </Link>
+                            </NavLink>
                         </nav>
                     </aside>
 
-                    <div className="flex flex-1 flex-col pt-20 px-10">{children}</div>
+
+                    <div className="flex flex-1 flex-col pt-20 px-14">{children}</div>
                 </div>
             </div>
+
+            <Link className="fixed top-10 right-10 text-primario" to={"/"}>
+                <MdClose  size={25}/>
+            </Link>
         </>
     );
 };

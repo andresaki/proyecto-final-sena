@@ -92,6 +92,7 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
         pagado: req.body.pagado,
         costoTotal: req.body.costoTotal,
         fechaEstimadaEntrega: req.body.fechaEstimadaEntrega,
+        cliente: req.body.cliente
     };
 
     let pedido = await Pedido.findById(req.params.id);
@@ -128,11 +129,38 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
 
     res.status(200).json({
         success: true,
+        message: "Pedido actualizado correctamente",
         pedido
     });
 })
 
 
 // eliminar un pedido
+exports.deletePedido = catchAsyncErrors (async ( req, res, next) => {
 
+
+    try{
+        const pedido  = await Pedido.findById(req.params.id)
+        
+        if(!pedido){
+            return next(new ErrorHandler(`Pedido con id ${req.params.id} no se encuentra en nuestra base de datos`))
+        }
+
+        await pedido.deleteOne({_id: pedido._id});
+        
+        res.status(200).json({
+            success: true,
+            message: "Pedido eliminado correctamente"
+        })
+
+
+    }catch (error) {
+
+        res.status(500).json({
+            success: false,
+            message: "Error al eliminar el registro del pedido"
+        })
+        
+    }
+})
 

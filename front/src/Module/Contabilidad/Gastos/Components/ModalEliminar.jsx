@@ -1,16 +1,49 @@
-import React from "react";
-
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // iconos
 import {  AiOutlineDelete} from "react-icons/ai";
 
 // Keep react
-import {Button, Modal} from "keep-react";
+import {Button, Modal, toast} from "keep-react";
+import { DELETE_GASTO_RESET } from "../../../../Redux/constants/gastoConstants";
+import { deleteGasto, getGastos } from "../../../../Redux/actions/gastoActions";
 
-// data
-import { ingresos } from "../../../../Data/Ingresos";
 
-export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
-    const ingreso = ingresos[ingresoId - 1];
+export const ModalEliminar = ({ gastoId, showModal, handleCloseModal }) => {
+    
+    const {gastos} = useSelector(state => state.gastos)
+    const { isDelected ,error } = useSelector(    (state) => state.deleteGasto  );
+
+    const gasto = gastos.find(c => c._id === gastoId);
+    
+    const dispatch = useDispatch()
+    const navigate = useNavigate();
+
+
+    
+
+    useEffect(() => {
+
+        if (error) {
+            toast.error(error)
+        }
+
+        // no se si funcione
+        if (isDelected) {
+            toast.success("Gasto eliminado correctamente")
+            dispatch({type: DELETE_GASTO_RESET})
+            dispatch(getGastos());
+            handleCloseModal();
+            navigate("/Contabilidad/Egresos");
+
+        }
+    }, [dispatch, toast, isDelected]);
+
+
+    const deleteHandler = (id) => {
+        dispatch(deleteGasto(id))
+    }
 
     return (
         <>
@@ -24,7 +57,7 @@ export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
                             ¿Eliminar registro de gasto? 
                         </h3>
                         <p className="mx-auto max-w-md text-body-4 font-normal text-metal-600">
-                            Estás seguro de eliminarlo es de tipo ( {ingreso.categoria} )
+                            Estás seguro de eliminarlo es de tipo ( {gasto.categoria} )
                         </p>
                     </Modal.Content>
                     <Modal.Footer>
@@ -35,7 +68,7 @@ export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
                             cancelar
                         </Button>
                         <Button
-                            onClick={handleCloseModal}
+                            onClick={() => deleteHandler(gastoId)}
                             className="text-white h-12 inline-flex items-center bg-primario focus:ring-4 focus:outline-none font-medium  text-base px-5 py-2.5 text-center  rounded-xl hover:bg-primario hover:scale-105"
                         >
                             Confirmar

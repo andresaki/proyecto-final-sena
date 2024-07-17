@@ -1,14 +1,17 @@
 import React from "react";
 
 // iconos
-import { CiFilter} from "react-icons/ci";
-import {  MdCheck} from "react-icons/md";
+import { CiFilter } from "react-icons/ci";
+import { MdCheck } from "react-icons/md";
 
 // Keep react
-import { Dropdown, Divider} from "keep-react";
+import { Dropdown, Divider } from "keep-react";
 
-
-export const DropdownFilterComponent = () => {
+export const DropdownFilterComponent = ({
+    filterCategoria,
+    categoria,
+    categorias,
+}) => {
     return (
         <Dropdown
             action={
@@ -22,85 +25,42 @@ export const DropdownFilterComponent = () => {
             placement="right-start"
         >
             <Dropdown.List>
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck size={20} fontWeight={100} />
-                    <p className=" ml-1 text-sm">Ascendente</p>
-                </Dropdown.Item>
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Descendente</p>
+
+
+
+
+                <Dropdown.Item
+                    onClick={() => filterCategoria("")}
+                    className={` pl-10  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ${
+                        categoria === "" && `pl-3 font-semibold`
+                    }`}
+                >
+                    {categoria === "" && <MdCheck size={20} fontWeight={100} />}
+
+                    <p className=" ml-1 text-sm">Todas</p>
                 </Dropdown.Item>
 
-                <Divider className="w-11/12 mx-auto my-2" />
+                {categorias.map((c) => (
+                    <Dropdown.Item
+                        onClick={() => filterCategoria(c)}
+                        key={c}
+                        className={` pl-10  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ${
+                            categoria === c && `pl-3 font-semibold`
+                        }`}
+                    >
+                        {categoria === c && (
+                            <MdCheck size={20} fontWeight={100} />
+                        )}
 
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Pendientes</p>
-                </Dropdown.Item>
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Completados </p>
-                </Dropdown.Item>
+                        <p className=" ml-1 text-sm"> {c}</p>
+                    </Dropdown.Item>
+                ))}
 
-                <Divider className="w-11/12 mx-auto my-2" />
 
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Reclamados</p>
-                </Dropdown.Item>
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">No reclamados </p>
-                </Dropdown.Item>
-                <Divider className="w-11/12 mx-auto my-2" />
 
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Pagados</p>
-                </Dropdown.Item>
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">No pagados </p>
-                </Dropdown.Item>
 
-                <Divider className="w-11/12 mx-auto my-2" />
 
-                <Dropdown.Item className=" pl-3  flex items-center text-gray-600 hover:text-primario cursor-default hover:bg-transparent ">
-                    <MdCheck
-                        size={20}
-                        fontWeight={100}
-                        className="fill-transparent "
-                    />
-                    <p className=" ml-1 text-sm">Fecha de Entrega</p>
-                </Dropdown.Item>
+
             </Dropdown.List>
         </Dropdown>
     );
