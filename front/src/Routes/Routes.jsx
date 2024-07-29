@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 
 // Router dom
-import { Routes, Route, BrowserRouter, useLocation } from "react-router-dom";
+import { Routes, Route, BrowserRouter, useLocation, Navigate } from "react-router-dom";
 
 // componentes
 import Home from "../Module/Home/Home";
@@ -40,6 +40,9 @@ function AppRoutes() {
             {atajologOut && <LogOutAtajo/>}
             <Routes >
 
+            
+
+
                 {/* Rutas sin protencion */}
                 <Route path="/login" element={<Login/>} />
                 <Route path="/contrasenaOlvidada" element={<OlvidarContraseña/>} />
@@ -67,8 +70,10 @@ function AppRoutes() {
                 {/* Rutas protegidas , para admin */}
                 <Route path="/Admin"  element={  <ProtectedRoute isAdmin={true}> <Admin />  </ProtectedRoute>   } />
                 <Route path="/Admin/NewUsuario"  element={ <ProtectedRoute isAdmin={true}>  <NewUsuario />   </ProtectedRoute>   } />
-                <Route path="/Admin/Edit"  element={ <ProtectedRoute isAdmin={true}>  <EditUsuario />  </ProtectedRoute>   }  />
+                <Route path="/Admin/Edit/:id"  element={ <ProtectedRoute isAdmin={true}>  <EditUsuario />  </ProtectedRoute>   }  />
 
+                <Route path="*" element={<Navigate to="/" />} />
+            
 
             </Routes>
             <FullScreen />

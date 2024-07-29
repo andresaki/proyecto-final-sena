@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { getProducts, clearErrors, updateProduct, getProductDetails } from "../../../Redux/actions/productoActions";
 import { NumericFormat } from "react-number-format";
 import { UPDATE_PRODUCT_RESET } from "../../../Redux/constants/productoConstants";
+import { getMovimientos } from "../../../Redux/actions/stockActions";
 
 
 export const ModalEditar = ({ productoId, showModal, handleCloseModal }) => {

@@ -60,8 +60,8 @@ export const HeaderAdmin = ({children}) => {
             </header>
 
             <div className="flex flex-1 ">
-                <aside className="hidden w-14 flex-col ml-3 rounded-t-xl sm:flex bg-blue-100">
-                    <nav className="flex flex-col items-center gap-8 px-2 sm:py-5">
+                <aside className="hidden w-14 h-full flex-col ml-3 rounded-xl sm:flex bg-secundario  fixed top-16 ">
+                    <nav className="flex flex-col items-center gap-8 px-2 sm:py-5 ">
                         <Link className="relative group" to={"/Admin"}>
                             <BiSolidDashboard    className="fill-primario"    size={23}         />
                             <p className="absolute left-11 top-0 rounded-md w-max px-2 text-center py-1  bg-primario text-white font-semibold text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">Dashboard</p>
@@ -74,14 +74,14 @@ export const HeaderAdmin = ({children}) => {
                         <Link className="relative group"  to={"/"}>
                             <CgWebsite className="text-primario" size={24} />
                             
-                            
+                            <p className="absolute left-11 top-0 rounded-md w-max px-2 text-center py-1  bg-primario text-white font-semibold text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300">Sitio web</p>
                         </Link>
                             
                         
                     </nav>
                 </aside>
 
-                <div className="flex flex-1 flex-col">
+                <div className="flex flex-1 flex-col ml-16">
                     {children}
                 </div>
             </div>

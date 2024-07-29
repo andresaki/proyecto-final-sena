@@ -33,7 +33,6 @@ export const ModalEliminar = ({ ingresoId, showModal, handleCloseModal }) => {
             toast.error(error)
         }
 
-        // no se si funcione
         if (isDelected) {
             toast.success("Ingreso eliminado correctamente")
             dispatch({type: DELETE_INGRESO_RESET})

@@ -171,11 +171,12 @@ export const ModalNewComponent = () => {
                                             );
                                         }}
                                         className="outline-none border border-bordeInput text-gray-800 text-xs rounded-md block w-full p-3 focus:ring-primario focus:ring-2 "
-                                        
+                                        minLength="10"
                                         prefix={"Tel :  "}
                                         decimalScale={0}
                                         fixedDecimalScale={true}
                                         allowNegative={false}
+                                        type="tel"
                                     />
                                 </div>
 

@@ -16,7 +16,7 @@ import { deleteCliente, getClientes } from "../../../Redux/actions/clienteAction
 export const ModalEliminar = ({ clienteId, showModal, handleCloseModal }) => {
 
     const {clientes} = useSelector(state => state.clientes)
-    const { success } = useSelector(    (state) => state.cliente  );
+    const { isDelected ,error } = useSelector(    (state) => state.cliente  );
 
     const cliente = clientes.find(c => c._id === clienteId);
     
@@ -24,9 +24,11 @@ export const ModalEliminar = ({ clienteId, showModal, handleCloseModal }) => {
     const navigate = useNavigate();
     useEffect(() => {
        
-
+        if (error) {
+            toast.error(error)
+        }
         // no se si funcione
-        if (success) {
+        if (isDelected) {
             toast.success("cliente eliminado correctamente")
             dispatch({type: DELETE_CLIENTE_RESET})
             dispatch(getClientes());
@@ -34,17 +36,12 @@ export const ModalEliminar = ({ clienteId, showModal, handleCloseModal }) => {
             navigate("/Clientes");
 
         }
-    }, [dispatch, toast, success]);
+    }, [dispatch, toast, isDelected]);
     
     
     const deleteHandler = (id) => {
         dispatch(deleteCliente(id))
 
-        toast.success("cliente eliminado correctamente")
-        dispatch({type: DELETE_CLIENTE_RESET})
-        dispatch(getClientes());
-        handleCloseModal();
-        navigate("/Clientes");
     }
 
     return (

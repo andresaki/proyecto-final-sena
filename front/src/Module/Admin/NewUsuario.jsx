@@ -4,8 +4,8 @@ import { HeaderAdmin } from "./HeaderAdmin";
 import { Button, toast } from "keep-react";
 
 import { MetaData } from "../../Componentes Generales/MetaData/MetaData";
-import {register , clearErrors} from "../../Redux/actions/userActions"
-import { Navigate } from "react-router-dom";
+import {register , clearErrors, getUsers} from "../../Redux/actions/userActions"
+import { Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "../../Hooks/useForm";
 
 
@@ -22,6 +22,7 @@ export const NewUsuario = () => {
     const { nombre, email, password } = formState;
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { user, error, loading } = useSelector(state => state.auth)
 
     useEffect(() => {
@@ -46,9 +47,9 @@ export const NewUsuario = () => {
     const onSubmit = (event) => {
         event.preventDefault();
         dispatch(register(formState))
-
-
         toast.success("Usuario creado correctamente")
+        navigate("/Admin")
+        dispatch(getUsers())
     };
 
 

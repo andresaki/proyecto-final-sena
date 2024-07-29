@@ -2,6 +2,15 @@ import React from "react";
 import { DropdownAccionesComponent } from "./DropdownAccionesComponent";
 
 export const ItemTabla = ({ producto , index }) => {
+
+    const formatDateWithoutTime = (dateString) => {
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, "0");
+        const day = date.getDate().toString().padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
     
     return (
         <tr className="  bg-white border-b cursor-default   h-9 hover:bg-gray-50 font-light text-xs text-neutral-600 ">
@@ -13,7 +22,7 @@ export const ItemTabla = ({ producto , index }) => {
             <td className="pl-7 font-medium text-primario">
                 {producto.stockMinimo}
             </td>
-            <td> {producto.fechaModificacion}</td>
+            <td> {formatDateWithoutTime(producto.fechaModificacion)}</td>
             <td>
                 <DropdownAccionesComponent productoId={producto._id} />
             </td>

@@ -142,9 +142,6 @@ exports.resetPassword = catchAsyncErrors( async (req, res, next) => {
         resetPasswordExpire: {$gt: Date.now()}
     })
 
-    
-
-
     if (!user){
         return next(new ErrorHandler("El token es invalido o ya expiro" , 400))
     }
@@ -305,21 +302,32 @@ exports.getUserDetails = catchAsyncErrors(async(req, res, next) => {
 // Actualizar perfil de un usuario
 exports.updateUserAdmin = catchAsyncErrors ( async (req, res , next) => {
 
-    const newData =  {
-        nombre: req.body.nombre,
-        email: req.body.email,
-        password: req.body.password
+    const user = await User.findById(req.params.id);
+    
+    if (!user) {
+        return res.status(404).json({
+            success: false,
+            message: 'User not found',
+        });
     }
 
-    const user = await User.findByIdAndUpdate(req.params.id, newData ,{
-        new: true,
-        runValidators: true
-    })
+    user.nombre = req.body.nombre || user.nombre;
+    user.email = req.body.email || user.email;
+
+    // Si hay una nueva contraseña, se actualizará y se encriptará en el middleware pre-save
+    if (req.body.password) {
+        user.password = req.body.password;
+    }
+
+
+    // Guardar el usuario actualizado
+    await user.save();
 
     res.status(200).json({
         success: true,
-        user
-    })
+        user,
+    });
+
 })
 
 
@@ -327,13 +335,13 @@ exports.updateUserAdmin = catchAsyncErrors ( async (req, res , next) => {
 exports.deleteUser = catchAsyncErrors( async( req, res, next) => {
     
 
-    const user = await User.findBy(req.params.id)
+    const user = await User.findById(req.params.id);
 
     if(!user){
         return next(new ErrorHandler(`Usuario con id: ${req.params.id} no se encuentra en nuestra base de datos`))
     }
 
-    await user.remove();
+    await user.deleteOne({_id : user._id});
 
     res.status(200).json({
         success: true,

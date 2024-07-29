@@ -321,7 +321,7 @@ function Pedidos() {
     ));
 
     return (
-        <main className="container mx-auto px-10 pt-10   self-center 2xl:mx-40  lg:px-14 lg:pt-16   xl:px-10   2xl:px-10 2xl:pt-28  mt-20 ">
+        <main className="container mx-auto px-10 pt-10   self-center  lg:px-14 lg:pt-16   xl:px-10   2xl:px-10 2xl:pt-28  mt-20 ">
             <MetaData title={"Pedidos"} />
 
             <div className="w-full flex justify-between items-center ">
@@ -365,8 +365,8 @@ function Pedidos() {
                                 Opps!
                             </h3>
                             <p className="text-center text-gray-600">
-                                Parece que aún no hay clientes registrados. Por
-                                favor, añada clientes para verlos aquí.
+                                Parece que aún no hay Pedidos registrados. Por
+                                favor, añada Pedidos para verlos aquí.
                             </p>
                         </div>
                     </div>

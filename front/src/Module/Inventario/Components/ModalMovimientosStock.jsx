@@ -44,7 +44,7 @@ export const ModalMovimientosStock = () => {
         <>
             <Button
                 onClick={openModal}
-                className="border-none hover:bg-blue-100 bg-transparent rounded-full flex items-center justify-center  h-10 focus:outline-none w-10 transition-all duration-300"
+                className="border-none hover:bg-bg-secundario bg-transparent rounded-full flex items-center justify-center  h-10 focus:outline-none w-10 transition-all duration-300"
                 type="button"
             >
                 <span>
@@ -56,7 +56,7 @@ export const ModalMovimientosStock = () => {
                     <div>
                         <Button
                             onClick={closeModal}
-                            className="p-0 bg-transparent hover:bg-blue-50  rounded-full hover:scale-105 transition-all duration-100 font-montserrat hover:text-gray-900  flex justify-center items-center "
+                            className="p-0 bg-transparent hover:bg-bg-secundario  rounded-full hover:scale-105 transition-all duration-100 font-montserrat hover:text-gray-900  flex justify-center items-center "
                         >
                             <span>
                                 <IoCloseOutline className="rounded-full h-6   w-6  lg:w-5 lg:h-5   text-gray-600 transition-all duration-300 bg-transparent m-auto" />

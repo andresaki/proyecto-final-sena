@@ -56,7 +56,7 @@ export const ModalNewComponent = () => {
     useEffect(() => {
         if (error) {
             toast.error(error);
-            dispatch(clearErrors);
+            dispatch(clearErrors());
         }
 
         if (success) {
@@ -65,11 +65,20 @@ export const ModalNewComponent = () => {
             closeModal();
             dispatch({ type: NEW_PRODUCT_RESET });
             dispatch(getProducts());
+
+            setNombre("")
+            setCategoria("")
+            setStock(0)
+            setStockMinimo(0)
+            setPrecio(0)
         }
     }, [dispatch, toast, error, success]);
 
     const onSubmit = (event) => {
         event.preventDefault();
+
+        
+
 
         const formData = new FormData();
         formData.set("nombre", nombre);

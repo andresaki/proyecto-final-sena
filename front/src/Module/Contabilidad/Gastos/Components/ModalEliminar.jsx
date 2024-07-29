@@ -29,7 +29,6 @@ export const ModalEliminar = ({ gastoId, showModal, handleCloseModal }) => {
             toast.error(error)
         }
 
-        // no se si funcione
         if (isDelected) {
             toast.success("Gasto eliminado correctamente")
             dispatch({type: DELETE_GASTO_RESET})

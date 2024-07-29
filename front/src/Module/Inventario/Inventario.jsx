@@ -49,11 +49,12 @@ function Inventario() {
     useEffect(() => {
         if (productos && productos.length > 0) {
             setproductosData(productos);
+            setMostrarMensaje(false);
+        } else if (productos && productos.length === 0) {
+            setMostrarMensaje(true);
         }
-    }, [productos]);
 
-    // Mostra alerta si hay error al traer los productos
-    useEffect(() => {
+
         if (error) {
             toast.error("No se pudo obtener los productos", {
                 position: "bottom-left",
@@ -67,7 +68,8 @@ function Inventario() {
                 },
             });
         }
-    }, [error]);
+    }, [productos, error]);
+
 
     // Mostrar mensaje si no hay productos después de 3 segundos
     useEffect(() => {
@@ -81,11 +83,7 @@ function Inventario() {
         return () => clearTimeout(timerId);
     }, [productosData, error]);
 
-    // Mostrar toast si mostrarMensaje es true
-    useEffect(() => {
-        if (mostrarMensaje) {
-        }
-    }, [mostrarMensaje]);
+
 
     // Función para manejar el cambio en el input de búsqueda
     const searcher = (e) => {
@@ -108,7 +106,7 @@ function Inventario() {
 
     // useEffect para filtrar los productos en base a la búsqueda y la categoría
     useEffect(() => {
-        let resultado = productosData;
+        let resultado = [...productosData];
         resultado = resultado.slice().reverse()
 
         // Filtrar por categoría
@@ -153,6 +151,8 @@ function Inventario() {
         setproductosFiltrados(resultado);
     }, [search, categoria, productosData, stock]);
 
+
+
     const categorias = [
         ...new Set(productosData.map((producto) => producto.categoria)),
     ];
@@ -196,7 +196,7 @@ function Inventario() {
                 <>
                     <div className="mt-40 ">
                         <div className="px-10 py-4  w-full md:w-3/4 xl:w-1/2 2xl:w-2/5 mx-auto rounded-2xl  border-slate-200">
-                            <div className="w-16 h-16 flex items-center mx-auto rounded-full bg-blue-100 ">
+                            <div className="w-16 h-16 flex items-center mx-auto rounded-full bg-secundario ">
                                 <PiEmptyBold
                                     size={30}
                                     className="mx-auto fill-primario "

@@ -18,13 +18,16 @@ export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
     const navigate = useNavigate();
     const {productos} = useSelector(state => state.products)
 
-    const { success } = useSelector(    (state) => state.product  );
+    const { isDelected ,error } = useSelector(    (state) => state.product  );
 
     const producto = productos.find(p => p._id === productoId);
-    console.log(success)
+    
     useEffect(() => {
-       
-        if (success) {
+        if (error) {
+            toast.error(error)
+        }
+
+        if (isDelected) {
             toast.success("producto eliminado correctamente")
             dispatch({type: DELETE_PRODUCT_RESET})
             dispatch(getProducts());
@@ -32,7 +35,7 @@ export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
             navigate("/Inventario");
 
         }
-    }, [dispatch, toast, success]);
+    }, [dispatch, toast, isDelected]);
     
     
     const deleteProductHandler = (id) => {
@@ -44,7 +47,7 @@ export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
         <>
             <Modal isOpen={showModal} onClose={handleCloseModal}>
                 <Modal.Body className="flex w-[500px] flex-col items-center p-6 lg:p-8">
-                    <Modal.Icon className="h-20 w-20 border mb-2 border-blue-200 bg-blue-50 text-blue-500">
+                    <Modal.Icon className="h-20 w-20 border mb-2 border-primario bg-secundario text-primario">
                         <AiOutlineDelete size={50} />
                     </Modal.Icon>
                     <Modal.Content className="my-8 text-center">
@@ -52,7 +55,7 @@ export const ModalEliminar = ({ productoId, showModal, handleCloseModal }) => {
                             ¿Eliminar {producto.nombre}?
                         </h3>
                         <p className="mx-auto max-w-md text-body-4 font-normal text-metal-600">
-                            Estás seguro de eliminar
+                            Estás seguro de eliminar el registro de
                             {" " + producto.nombre}. No podrás
                             recuperarlo. Asegúrate de que no haya acciones
                             asociadas a este producto.

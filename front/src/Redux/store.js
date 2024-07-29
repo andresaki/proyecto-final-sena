@@ -1,7 +1,7 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit'
 import { thunk } from 'redux-thunk';
 import { newProductReducer, productDetailsReducer, productosReducer, productReducer } from './reducer/productoReducer';
-import { authReducer, forgotPasswordReducer, userReducer } from './reducer/userReducer';
+import { allUserReducer, authReducer, deleteUserReducer, forgotPasswordReducer, userReducer } from './reducer/userReducer';
 import { movimientosStockReducer, newMovimientoStockReducer } from './reducer/stockReducer';
 import { clienteDetailsReducer, clienteReducer, clientesReducer, newclienteReducer } from './reducer/clienteReducer';
 import { newpedidoReducer, pedidoDetailsReducer, pedidoReducer, pedidosReducer, setPedidoFilterReducer, updatePedidoReducer } from './reducer/pedidoReducer';
@@ -21,6 +21,8 @@ let reducer = combineReducers({
     auth: authReducer, 
     user: userReducer,
     forgotPassword : forgotPasswordReducer,
+    users : allUserReducer,
+    deleteUser : deleteUserReducer,
 
 
     // stock

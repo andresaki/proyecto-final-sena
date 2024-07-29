@@ -33,6 +33,17 @@ import {
     UPDATE_COLOR_SUCCESS,
     UPDATE_COLOR_RESET,
     UPDATE_COLOR_FAIL,
+    ALL_USER_SUCCESS,
+    ALL_USER_REQUEST,
+    ALL_USER_FAIL,
+    DELETE_USER_REQUEST,
+    DELETE_USER_SUCCESS,
+    DELETE_USER_FAIL,
+    DELETE_USER_RESET,
+    USER_UPDATE_REQUEST,
+    USER_UPDATE_SUCCESS,
+    USER_UPDATE_FAIL,
+    USER_UPDATE_RESET,
 } from "../constants/userConstants";
 
 // Cambios y reducer sobre autenticacion
@@ -143,6 +154,7 @@ export const  userReducer = ( state = {} ,  action ) => {
         case UPDATE_COMPANY_REQUEST:
         case UPDATE_PASSWORD_REQUEST:
         case UPDATE_COLOR_REQUEST:
+        case USER_UPDATE_REQUEST:
             return {
                 ...state,
                 loading:true
@@ -152,6 +164,7 @@ export const  userReducer = ( state = {} ,  action ) => {
         case UPDATE_COMPANY_SUCCESS:
         case UPDATE_PASSWORD_SUCCESS:
         case UPDATE_COLOR_SUCCESS:
+        case USER_UPDATE_SUCCESS:
             return {
                 ...state,
                 loading: false,
@@ -162,6 +175,8 @@ export const  userReducer = ( state = {} ,  action ) => {
         case UPDATE_COMPANY_RESET:
         case UPDATE_PASSWORD_RESET:
         case UPDATE_COLOR_RESET:
+        case USER_UPDATE_RESET:
+        
             return {
                 ...state,
                 isUpdated: false
@@ -171,6 +186,7 @@ export const  userReducer = ( state = {} ,  action ) => {
         case UPDATE_COMPANY_FAIL:
         case UPDATE_PASSWORD_FAIL:
         case UPDATE_COLOR_FAIL:
+        case USER_UPDATE_FAIL:
             return {
                 ...state,
                 loading: false,
@@ -238,7 +254,76 @@ export const forgotPasswordReducer = (state = {}, action)  => {
 
     }
 
-
-
-
 }
+
+// reducer all pedidos and all pedidos for cliente
+export const   allUserReducer = (state = { users: [] }, action) => {
+    switch (action.type) {
+        case ALL_USER_REQUEST :
+            return {
+                loading: true,
+                users: [],
+            };
+
+        case ALL_USER_SUCCESS:
+            return {
+                loading: false,
+                users: action.payload.users
+            };
+
+        case ALL_USER_FAIL:
+            return {
+                loading: false,
+                error: action.payload,
+            };
+
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null,
+            };
+
+        default:
+            return state;
+    }
+};
+
+
+// reducer delete and update user
+export const deleteUserReducer = (state = { state: {} }, action) => {
+    switch (action.type) {
+
+
+        case DELETE_USER_REQUEST:
+            return {
+                ...state,
+                loading: true,
+            };
+        case DELETE_USER_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                isDelected: action.payload,
+            };
+        case DELETE_USER_FAIL:
+            return {
+                ...state,
+                error: action.payload,
+
+            };
+
+        case DELETE_USER_RESET:
+            return {
+                ...state,
+                isDelected: false,
+            };
+
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null,
+            };
+        default:
+            return state;
+    }
+};

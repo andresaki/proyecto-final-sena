@@ -120,7 +120,6 @@ export const pedidoReducer = (state = { state: {} }, action) => {
                 ...state,
                 loading: false,
                 isDelected: action.payload,
-                success: action.payload.success
             };
 
 
@@ -138,7 +137,6 @@ export const pedidoReducer = (state = { state: {} }, action) => {
             return {
                 ...state,
                 isDelected: false,
-                success: false
             };
 
 

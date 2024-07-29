@@ -25,6 +25,7 @@ const usuarioSchema = new mongoose.Schema({
     telefono: {
         type: String,
         default: "",
+        minlength: [10, "El telefono no tiene no esta completo"],
     },
     role: {
         type: String,

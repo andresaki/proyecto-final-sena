@@ -7,7 +7,7 @@ const connectDatabase = () => {
     // Utilizamos el valor almacenado en la variable de entorno DB_LOCAL_URI como la URL de la base de datos a la que nos conectaremos
     // También configuramos algunas opciones, como useNewUrlParser y useUnifiedTopology, para evitar advertencias de deprecación
     // Utilizamos una promesa para manejar la conexión exitosa y mostrar un mensaje de éxito en la consola
-    mongoose.connect(process.env.DB_LOCAL_URI ).then(con => {
+    mongoose.connect(process.env.DB_URI ).then(con => {
         console.log(`Base de datos conectada con el servidor: ${con.connection.host}`);
     }).catch(err => {
         console.error(`Error al conectar a la base de datos: ${err}`); 

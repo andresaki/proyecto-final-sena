@@ -18,13 +18,15 @@ export const ModalEliminar = ({ pedidoId, showModal, handleCloseModal }) => {
     const dispatch = useDispatch()
     const navigate = useNavigate();
     const {pedidos} = useSelector(state => state.pedidos)
-    const { success } = useSelector( (state) => state.pedido);
+    const { isDelected ,error } = useSelector( (state) => state.pedido);
     const pedido = pedidos.find(p => p._id === pedidoId);
 
 
     useEffect(() => {
-       
-        if (success) {
+        if (error) {
+            toast.error(error)
+        }
+        if (isDelected) {
             toast.success("Pedido eliminado correctamente")
             dispatch({type: DELETE_PEDIDO_RESET})
             dispatch(getPedidos());
@@ -32,17 +34,11 @@ export const ModalEliminar = ({ pedidoId, showModal, handleCloseModal }) => {
             navigate("/Pedidos");
 
         }
-    }, [dispatch, toast, success]);
+    }, [dispatch, toast, isDelected]);
     
     
     const deleteProductHandler = (id) => {
         dispatch(deletePedido(id))
-
-        toast.success("Pedido eliminado correctamente")
-        dispatch({type: DELETE_PEDIDO_RESET})
-        dispatch(getPedidos());
-        handleCloseModal();
-        navigate("/Pedidos");
     }
 
 

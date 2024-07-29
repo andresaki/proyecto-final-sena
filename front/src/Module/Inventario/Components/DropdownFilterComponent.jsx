@@ -24,7 +24,7 @@ export const DropdownFilterComponent = ({
                     className=" rounded-full h-6     w-6  lg:w-5 lg:h-5   fill-gray-700 transition-all duration-300 bg-transparent m-auto"
                 />
             }
-            actionClassName="border-none hover:bg-blue-100  rounded-full flex items-center justify-center  h-10 focus:outline-none w-10 transition-all duration-300"
+            actionClassName="border-none hover:bg-secundario  rounded-full flex items-center justify-center  h-10 focus:outline-none w-10 transition-all duration-300"
             className="p-0  py-1 w-48 origin-top-right rounded-md bg-white shadow-sm focus:outline-none"
             placement="right-start"
         >
