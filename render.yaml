@@ -3,7 +3,8 @@ build:
   - name: Install dependencies
     script: |
       npm install --force --prefix front
-      npm install --force  
+      npm install --force
   - name: Build application
     script: |
       npm run build --prefix front
+      ls -lR
