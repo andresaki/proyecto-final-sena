@@ -2,13 +2,12 @@
 const app = require("./app");
 const connectDatabase = require("./config/database");
  
-// Importar el módulo 'dotenv' para cargar variables de entorno desde un archivo .env
-const dotenv = require("dotenv");
+
 
 // Importar y configurar el módulo dotenv. dotenv es una librería utilizada para cargar variables de entorno desde un archivo llamado .env
 // Configurar 'dotenv' para cargar variables desde el archivo config.env ubicado en la carpeta back/config
-dotenv.config({path: "back/config/config.env"});
 
+if(process.env.NODE_ENV==="PRODUCTION") require("dotenv").config(({path: 'back/config/config.env'}))
 
 connectDatabase();
 

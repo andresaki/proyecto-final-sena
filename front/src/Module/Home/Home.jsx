@@ -93,6 +93,7 @@ function Home() {
                         <CardArea
                             titulo={"Ingresos"}
                             texto={"Ingresos de los ultimos 6 meses"}
+                            
                         >
                             <AreaChart
                                 dataKey="x"
@@ -114,6 +115,7 @@ function Home() {
                         <CardArea
                             titulo={"Egresos"}
                             texto={"Egresos de los ultimos 6 meses"}
+                            
                         >
                             <AreaChart
                                 dataKey="x"
@@ -163,11 +165,12 @@ const Card = ({ informacion, texto, color, to = "/", children , onClick}) => {
 const CardArea = ({ titulo, texto, children }) => {
     return (
         <div className="shadow-sm border p-6 rounded-lg">
-            <div className="pt-3">
-                <h2 className="text-2xl font-bold text-primario pb-1 ">
-                    {titulo}
-                </h2>
-                <p className="text-xs text-gray-500 "> {texto}</p>
+            <div className="pt-3 ">
+                
+                    <h2 className="text-2xl font-bold text-primario pb-1 ">
+                        {titulo}
+                    </h2>
+                    <p className="text-xs text-gray-500 "> {texto}</p>
             </div>
             <div className="pt-10 px-3">{children}</div>
         </div>
