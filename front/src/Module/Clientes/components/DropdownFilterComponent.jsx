@@ -9,7 +9,12 @@ import { MdBrightness1 } from "react-icons/md";
 // Keep react
 import { Dropdown } from "keep-react";
 
-export const DropdownFilterComponent = ({ filterA_Z, A_Z }) => {
+export const DropdownFilterComponent = ({
+    filterA_Z,
+    A_Z,
+    n_pedidos,
+    filterN_pedidos,
+}) => {
     return (
         <Dropdown
             action={
@@ -63,21 +68,6 @@ export const DropdownFilterComponent = ({ filterA_Z, A_Z }) => {
                     <p className=" ml-3 text-sm">De la A a la Z</p>
                 </Dropdown.Item>
 
-                {/* sin funcion */}
-
-                <Dropdown.Item className=" pl-3  flex items-center text-primario font-semibold cursor-default hover:bg-transparent mt-3 ">
-                    <BiBox size={20} fontWeight={100} className="stroke-0 " />
-                    <p className=" ml-1 text-sm">Por nº de pedidos</p>
-                </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
-                    <p className=" ml-3 text-sm">Menos de 5</p>
-                </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
-                    <p className=" ml-3 text-sm">Entre 5 y 10</p>
-                </Dropdown.Item>
-                <Dropdown.Item className="hover:text-primario pl-9   flex items-center text-gray-500 h-7 ">
-                    <p className=" ml-3 text-sm">Màs de 10</p>
-                </Dropdown.Item>
             </Dropdown.List>
         </Dropdown>
     );

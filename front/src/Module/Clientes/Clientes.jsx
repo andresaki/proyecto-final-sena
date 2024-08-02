@@ -9,11 +9,13 @@ import { PiEmptyBold } from "react-icons/pi";
 import { DropdownAccionesComponent } from "./components/DropdownAccionesComponent";
 import { DropdownFilterComponent } from "./components/DropdownFilterComponent";
 import { ModalNewComponent } from "./components/ModalNewComponent";
+import { getPedidos } from "../../Redux/actions/pedidoActionts";
 
 function Clientes() {
     const [clientesData, setclientesData] = useState([]);
     const [search, setsearch] = useState("");
     const [A_Z, setA_Z] = useState(false);
+    const [n_pedidos, setN_pedidos] = useState(0);
     const [paginaActual, setpaginaActual] = useState(1);
     const [clientesFiltrados, setclientesFiltrados] = useState([]);
     const [mostrarMensaje, setMostrarMensaje] = useState(false);
@@ -25,9 +27,13 @@ function Clientes() {
 
     const dispatch = useDispatch();
     const { clientes, error, loading } = useSelector((state) => state.clientes);
+    let { pedidos, loading: loadingPedido } = useSelector(
+        (state) => state.pedidos
+    );
 
     useEffect(() => {
         dispatch(getClientes());
+        dispatch(getPedidos());
     }, [dispatch]);
 
     useEffect(() => {
@@ -72,6 +78,14 @@ function Clientes() {
             resultado = resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
         }
 
+        
+
+
+
+
+
+
+
         setclientesFiltrados(resultado);
     }, [search, A_Z, clientesData]);
 
@@ -85,6 +99,10 @@ function Clientes() {
         setpaginaActual(1);
     };
 
+    const filterN_pedidos = (z) => {
+        setN_pedidos(z);
+        setpaginaActual(1);
+    };
 
     
 
@@ -123,7 +141,7 @@ function Clientes() {
                             onChange={searcher}
                         />
                     </div>
-                    <DropdownFilterComponent filterA_Z={filterA_Z} A_Z={A_Z} />
+                    <DropdownFilterComponent filterA_Z={filterA_Z} A_Z={A_Z}  filterN_pedidos={filterN_pedidos} n_pedidos={n_pedidos}/>
                 </div>
                 <ModalNewComponent />
             </div>
