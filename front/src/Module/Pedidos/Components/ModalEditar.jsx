@@ -75,7 +75,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
         }
 
         if (updateError) {
-            toast.error(error);
+            toast.error(updateError);
             dispatch(clearErrors());
         }
 
