@@ -98,7 +98,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
 
         }
-    }, [dispatch, toast, error, isUpdated,navigate,  updateError, pedido, pedidoId]);
+    }, [dispatch, toast, error, isUpdated,navigate,  updateError, pedido, pedidoId, showModal]);
 
   
 
