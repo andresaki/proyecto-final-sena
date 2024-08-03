@@ -88,9 +88,9 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
             setNombre("");
             setDescripcion("");
             setExpecificacionesCliente("");
-            setPagado(false);
-            setEntregado(false);
-            setTerminado(false);
+            setPagado();
+            setEntregado();
+            setTerminado();
             setCostoTotal(0);
             setFechaEstimadaEntrega("");
             setCliente("");
@@ -118,10 +118,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
         dispatch(updatePedido(pedido._id, formData));
 
-       console.log(
-        cliente
-
-       )
+       
     };
 
 
