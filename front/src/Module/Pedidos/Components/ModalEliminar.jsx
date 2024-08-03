@@ -57,13 +57,13 @@ export const ModalEliminar = ({ pedidoId, showModal, handleCloseModal }) => {
                         <p className="mx-auto max-w-md text-body-4 font-normal text-metal-600">
                             Estás seguro de eliminar
                             {" " + pedido.nombre}.{" "}
-                            {pedido.estadoProduccion ? (
+                            {pedido.entregado ? (
                                 ""
                             ) : (
                                 <>
                                     {" "}
                                     El Cual esta en estado{" "}
-                                    <strong>Pendiente</strong> <br />{" "}
+                                    <strong>No entregado</strong> <br />{" "}
                                 </>
                             )}{" "}
                             No podrás recuperarlo. Se eliminaran todas la
