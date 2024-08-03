@@ -6,28 +6,37 @@ const ErrorHandler = require("../utils/errorHandler");
 //  crear nuevo pedido
 exports.newPedido = catchAsyncErrors ( async( req, res, next) => {
     
+    req.body.user = req.user.id;
 
-    const pedido= await Pedido.create(req.body);
+    // Verifica y convierte 'pagado' a un booleano explícitamente
+    const pagado = req.body.pagado === true || req.body.pagado === 'true';
 
-    console.log(req.body.pagado)
-    if (req.body.pagado === true) {
+    console.log('Valor de pagado:', pagado);
 
-        // Crear un nuevo registro en la colección de ingresos
-        const ingreso = new Ingreso({
-            categoria: "Pedido",
-            descripcion: req.body.nombre,
-            monto: req.body.costoTotal,
-            user: req.user.id
-        });
+    const pedido = await Pedido.create(req.body);
 
-        await ingreso.save();
-        console.log(ingreso)
+    if (pagado) {
+        try {
+            // Crear un nuevo registro en la colección de ingresos
+            const ingreso = new Ingreso({
+                categoria: "Pedido",
+                descripcion: req.body.nombre,
+                monto: req.body.costoTotal,
+                user: req.user.id
+            });
+
+            await ingreso.save();
+            console.log('Ingreso creado:', ingreso);
+        } catch (error) {
+            console.error('Error al crear ingreso:', error);
+            return next(new Error('No se pudo crear el ingreso.'));
+        }
     }
 
     res.status(201).json({
-        success:true,
+        success: true,
         pedido
-    })
+    });
 
 })
 
@@ -83,7 +92,7 @@ exports.AllPedidosCliente = catchAsyncErrors( async(req, res, next) => {
 
 
 // actualizar un pedido
-exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
+exports.updatePedido = catchAsyncErrors(async (req, res, next) => {
     const newData = {
         nombre: req.body.nombre,
         descripcion: req.body.descripcion,
@@ -97,13 +106,21 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
     };
 
     let pedido = await Pedido.findById(req.params.id);
-    
-    
-    // verificar si el pedido ya estaba pagado
-    if (pedido.pagado === true && req.body.pagado === true) {  } 
-    
-    else if (pedido.pagado === false && req.body.pagado === true) {
 
+    if (!pedido) {
+        return next(new ErrorHandler("Pedido no encontrado", 404));
+    }
+
+    // Verifica y convierte 'pagado' a un booleano explícitamente
+    const pagado = req.body.pagado === true || req.body.pagado === 'true';
+
+    console.log('Estado anterior de pagado:', pedido.pagado);
+    console.log('Nuevo valor de pagado:', pagado);
+
+    // Verificar si el pedido ya estaba pagado
+    if (pedido.pagado === true && pagado === true) {
+        // El pedido ya estaba pagado y se mantiene pagado, no hacer nada
+    } else if (pedido.pagado === false && pagado === true) {
         // Crear un nuevo registro en la colección de ingresos
         const ingreso = new Ingreso({
             categoria: "Pedido",
@@ -113,14 +130,10 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
         });
 
         await ingreso.save();
+        console.log('Ingreso creado:', ingreso);
+    } else if (pedido.pagado === true && pagado === false) {
+        return next(new ErrorHandler("El pedido ya se encuentra pagado, no se permite cambiar el valor"));
     }
-
-    else if(pedido.pagado == true && req.body.pagado == false){
-        return next( new ErrorHandler("El pedido ya se encuentra pagado, no se permite cambiar el valor"))
-    }
-
-
-
 
     // Actualizar el pedido
     pedido = await Pedido.findByIdAndUpdate(req.params.id, newData, {
@@ -133,7 +146,7 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
         message: "Pedido actualizado correctamente",
         pedido
     });
-})
+});
 
 
 // eliminar un pedido
