@@ -6,10 +6,10 @@ const ErrorHandler = require("../utils/errorHandler");
 //  crear nuevo pedido
 exports.newPedido = catchAsyncErrors ( async( req, res, next) => {
     
-    req.body.user = req.user.id
 
     const pedido= await Pedido.create(req.body);
 
+    console.log(req.body.pagado)
     if (req.body.pagado === true) {
 
         // Crear un nuevo registro en la colección de ingresos
@@ -21,6 +21,7 @@ exports.newPedido = catchAsyncErrors ( async( req, res, next) => {
         });
 
         await ingreso.save();
+        console.log(ingreso)
     }
 
     res.status(201).json({
@@ -108,7 +109,7 @@ exports.updatePedido = catchAsyncErrors(async(req, res, next)=> {
             categoria: "Pedido",
             descripcion: pedido.nombre,
             monto: pedido.costoTotal,
-            user: req.user.id
+            user: req.user._id
         });
 
         await ingreso.save();
