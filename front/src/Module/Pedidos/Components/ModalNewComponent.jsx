@@ -70,8 +70,8 @@ export const ModalNewComponent = () => {
             setNombre("")
             setDescripcion("")
             setExpecificacionesCliente("")
-            setPagado("")
-            setCostoTotal("")
+            setPagado(false)
+            setCostoTotal(0)
             setFechaEstimadaEntrega("")
             setCliente("")
         }

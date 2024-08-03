@@ -91,7 +91,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
             setPagado(false);
             setEntregado(false);
             setTerminado(false);
-            setCostoTotal("");
+            setCostoTotal(0);
             setFechaEstimadaEntrega("");
             setCliente("");
 
@@ -100,10 +100,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
         }
     }, [dispatch, toast, error, isUpdated,navigate,  updateError, pedido, pedidoId]);
 
-    console.log(pedido)
-    console.log(
-        cliente
-    )
+  
 
     const onSubmit = (event) => {
         event.preventDefault();
