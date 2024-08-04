@@ -33,7 +33,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
         (state) => state.clientes
     );
     const { error, pedido } = useSelector((state) => state.pedidoDetails);
-    const { isUpdated, error: updateError} = useSelector(  (state) => state.updatePedido  );
+    const { isUpdated, error: errorUpdate} = useSelector(  (state) => state.updatePedido  );
 
     const [nombre, setNombre] = useState("");
     const [descripcion, setDescripcion] = useState("");
@@ -50,6 +50,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
         if (errorClientes) {
             toast.error(errorClientes);
+            toast("1")
             dispatch(clearErrors());
         }
     }, [dispatch, errorClientes]);
@@ -71,11 +72,13 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
         if (error) {
             toast.error(error);
+            toast("2")
             dispatch(clearErrors());
+            console.log("error 1");
         }
 
-        if (updateError) {
-            toast.error(updateError);
+        if (errorUpdate) {
+            toast.error(errorUpdate);
             dispatch(clearErrors());
         }
 
@@ -98,7 +101,7 @@ export const ModalEditar = ({ pedidoId, showModal, handleCloseModal }) => {
 
 
         }
-    }, [dispatch, toast, error, isUpdated,navigate,  updateError, pedido, pedidoId, showModal]);
+    }, [dispatch, toast, error, isUpdated,navigate,  errorUpdate, pedido, pedidoId, showModal]);
 
   
 

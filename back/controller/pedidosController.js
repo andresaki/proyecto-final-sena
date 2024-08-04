@@ -126,7 +126,7 @@ exports.updatePedido = catchAsyncErrors(async (req, res, next) => {
             categoria: "Pedido",
             descripcion: pedido.nombre,
             monto: pedido.costoTotal,
-            user: req.user._id
+            user: req.user.id
         });
 
         await ingreso.save();
